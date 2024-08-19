@@ -18,6 +18,13 @@ public class Aposta {
 		this.status = status;
 	}
 	
+	public Aposta(BigDecimal amount, List<Palpite> palpites, boolean status) {
+		super();
+		this.amount = amount;
+		this.palpites = palpites;
+		this.status = status;
+	}
+	
 	public int getId() {
 		return id;
 	}
