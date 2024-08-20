@@ -46,6 +46,7 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
         }
     }
     
+    @Override
     public void createListaDePalpites(int aposta, List<Palpite> palpites) throws InsercaoException {
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(INSERT_PALPITE)) {
@@ -129,7 +130,7 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
     }
 
     @Override
-	public List<Palpite> getAllPalpites(int apostaId) throws ConsultaException {
+	public List<Palpite> getTodosPalpitesDeUmaAposta(int apostaId) throws ConsultaException {
 	    List<Palpite> palpites = new ArrayList<>();
 	    try (Connection connection = getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES);

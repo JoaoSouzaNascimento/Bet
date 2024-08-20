@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import dao.ApostaDaoPostgreSQL;
+import dao.PalpiteDaoPostgreSQL;
 import exceptions.AtualizacaoException;
 import exceptions.ConsultaException;
 import exceptions.DelecaoException;
@@ -22,17 +23,19 @@ import model.Palpite;
 
 public class UsuarioService {
 	
-	private ApostaDaoPostgreSQL ApostaDao;
+	private ApostaDaoPostgreSQL apostaDao;
+	private PalpiteDaoPostgreSQL palpiteDao;
 	private Usuario usuario;
 	private Aposta aposta;
 	
 	// Manipualção do objeto aposta.
 	// TODO Altera para adicionar o registro da aposta e seus palpites.
-	public void apostar(BigDecimal valorApostado, List<Palpite> palpites) {
-		this.aposta = new Aposta(valorApostado, palpites, false);
+	public void apostar(BigDecimal valorApostado) {
+		this.aposta = new Aposta(valorApostado, false);
 		
 		try {
-			ApostaDao.createAposta(UUID this.usuario.getId(),aposta);
+			apostaDao.createAposta(usuario.getId(),aposta);
+			palpiteDao.createListaDePalpites(aposta.getId(), palpites);
 		} catch (InsercaoException e) {
 			e.printStackTrace();
 		}
@@ -42,7 +45,7 @@ public class UsuarioService {
 		
 		if(apostaId != this.aposta.getId()) {
 			try {
-				this.aposta =  ApostaDao.getApostaById(apostaId);
+				this.aposta =  apostaDao.getApostaById(apostaId);
 			} catch (ConsultaException e) {
 				e.printStackTrace();
 			}
@@ -60,7 +63,7 @@ public class UsuarioService {
 	
 	public void excluirAposta() {
 		try {
-			ApostaDao.deleteAposta(this.aposta.getId());
+			apostaDao.deleteAposta(this.aposta.getId());
 			this.aposta = null;
 		} catch (DelecaoException e) {
 			e.printStackTrace();
@@ -71,7 +74,7 @@ public class UsuarioService {
 		this.aposta.setAmount(NovoValorApostado);
 		
 		try {
-			ApostaDao.updateAposta(this.aposta);
+			apostaDao.updateAposta(this.aposta);
 		} catch (AtualizacaoException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +94,7 @@ public class UsuarioService {
 	
 	public void excluirPalpite(int palpitePartidaId) {
 		try {
-			ApostaDao.deleteAposta(this.aposta.getId());
+			apostaDao.deleteAposta(this.aposta.getId());
 			this.aposta = null;
 		} catch (DelecaoException e) {
 			e.printStackTrace();
@@ -100,7 +103,7 @@ public class UsuarioService {
 	
 	public UsuarioService(Usuario usuario) {
 		super();
-		ApostaDao = new ApostaDaoPostgreSQL();;
+		apostaDao = new ApostaDaoPostgreSQL();;
 		this.usuario = usuario;
 		this.aposta = null;
 	}

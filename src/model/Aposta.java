@@ -1,6 +1,7 @@
 package model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Aposta {
@@ -22,6 +23,13 @@ public class Aposta {
 		super();
 		this.amount = amount;
 		this.palpites = palpites;
+		this.status = status;
+	}
+	
+	public Aposta(BigDecimal amount, boolean status) {
+		super();
+		this.amount = amount;
+		this.palpites = new ArrayList<>();
 		this.status = status;
 	}
 	
