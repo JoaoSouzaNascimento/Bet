@@ -30,8 +30,8 @@ public class PartidaDaoPostgreSQL implements PartidaDao {
              PreparedStatement ps = conn.prepareStatement(sql)) {
              
             ps.setObject(1, partida.getId());
-            ps.setInt(2, partida.getTeamHome().getId());
-            ps.setInt(3, partida.getTeamAway().getId());
+            ps.setInt(2, partida.getTeamHome());
+            ps.setInt(3, partida.getTeamAway());
             ps.setObject(4, partida.getData());
             ps.setObject(5, partida.getTime());
             ps.setString(6, partida.getResultado().name());
@@ -54,8 +54,8 @@ public class PartidaDaoPostgreSQL implements PartidaDao {
         		PreparedStatement ps = conn.prepareStatement(sql)) {
              
             ps.setObject(1, partida.getId());
-            ps.setInt(2, partida.getTeamHome().getId());
-            ps.setInt(3, partida.getTeamAway().getId());
+            ps.setInt(2, partida.getTeamHome());
+            ps.setInt(3, partida.getTeamAway());
             ps.setObject(4, partida.getData());
             ps.setObject(5, partida.getTime());
             ps.setString(6, partida.getResultado().name());
@@ -82,37 +82,21 @@ public class PartidaDaoPostgreSQL implements PartidaDao {
 	                 "m.HOME_WIN_ODD AS home_win_odd, " +
 	                 "m.AWAY_WIN_ODD AS away_win_odd, " +
 	                 "m.DRAW_ODD AS draw_odd, " +
-	                 "th.ID AS team_home_id, " +
-	                 "th.NAME AS team_home_name, " +
-	                 "th.LOGO AS team_home_logo, " +
-	                 "ta.ID AS team_away_id, " +
-	                 "ta.NAME AS team_away_name " +
-	                 "ta.LOGO AS team_home_logo, " +
-	                 "FROM MATCHES m " +
-	                 "JOIN TEAMS th ON m.TEAM_HOME = th.ID " +
-	                 "JOIN TEAMS ta ON m.TEAM_AWAY = ta.ID";
-
+	                 "m.TEAM_AWAY AS team_home_id, " +
+	                 "m.TEAM_AWAY AS team_away_id, " +
+	                 "FROM MATCHES m ";
+	    
+	    
 	    try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
 	         PreparedStatement ps = conn.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
 
 	        while (rs.next()) {
-	            Time teamHome = new Time(
-	                rs.getInt("team_home_id"),
-	                rs.getString("team_home_name"),
-	                rs.getString("team_home_logo")
-	            );
-
-	            Time teamAway = new Time(
-	                rs.getInt("team_away_id"),
-	                rs.getString("team_away_name"),
-	                rs.getString("team_away_logo")
-	            );
 
 	            Partida partida = new Partida(
 	                rs.getInt("match_id"),
-	                teamHome,  
-	                teamAway,  
+	                rs.getInt("team_home_id"),  
+	                rs.getInt("team_away_id"),  
 	                rs.getDate("match_date").toLocalDate(),
 	                rs.getTime("match_time").toLocalTime(),
 	                StatusPartida.valueOf(rs.getString("match_status")),

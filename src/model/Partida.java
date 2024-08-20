@@ -6,8 +6,8 @@ import java.time.LocalTime;
 
 public class Partida {
 	private int id;
-	private Time teamHome;
-	private Time teamAway;
+	private int teamHome;
+	private int teamAway;
 	private LocalDate data;
 	private LocalTime time;
 	private StatusPartida status;
@@ -15,16 +15,17 @@ public class Partida {
 	private float homeWinOdd;
 	private float awayWinOdd;
 	private float drawOdd;
-	public Time getTeamHome() {
+	
+	public int getTeamHome() {
 		return teamHome;
 	}
-	public void setTeamHome(Time teamHome) {
+	public void setTeamHome(int teamHome) {
 		this.teamHome = teamHome;
 	}
-	public Time getTeamAway() {
+	public int getTeamAway() {
 		return teamAway;
 	}
-	public void setTeamAway(Time teamAway) {
+	public void setTeamAway(int teamAway) {
 		this.teamAway = teamAway;
 	}
 	public LocalDate getData() {
@@ -74,7 +75,7 @@ public class Partida {
 	}
 	
 	
-	public Partida(int id, Time teamHome, Time teamAway, LocalDate data, LocalTime time, StatusPartida status,
+	public Partida(int id, int teamHome, int teamAway, LocalDate data, LocalTime time, StatusPartida status,
 			ResultadoPartida resultado, float homeWinOdd, float awayWinOdd, float drawOdd) {
 		super();
 		this.id = id;
