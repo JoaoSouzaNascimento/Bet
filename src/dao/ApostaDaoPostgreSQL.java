@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import exceptions.AtualizacaoException;
 import exceptions.ConsultaException;
@@ -17,8 +18,8 @@ import model.Aposta;
 public class ApostaDaoPostgreSQL implements ApostaDao{
 
 	    @Override
-	    public Aposta createAposta(Aposta aposta) throws InsercaoException{
-	        String sql = "INSERT INTO \"APOSTAS\" (\"ID\", \"AMOUNT\", \"STATUS\") VALUES (?, ?, ?)";
+	    public Aposta createAposta(UUID usuarioId, Aposta aposta) throws InsercaoException{
+	        String sql = "INSERT INTO \"APOSTAS\" (\"ID\", \"AMOUNT\", \"STATUS\", \"USER_ID\") VALUES (?, ?, ?, ?)";
 	        
 			 try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
    		          PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -26,6 +27,7 @@ public class ApostaDaoPostgreSQL implements ApostaDao{
 	            ps.setInt(1, aposta.getId());
 	            ps.setBigDecimal(2, aposta.getAmount());
 	            ps.setBoolean(3, aposta.isStatus());
+	            ps.setObject(4, usuarioId);
 	            ps.executeUpdate();
 
 	        } catch (SQLException e) {

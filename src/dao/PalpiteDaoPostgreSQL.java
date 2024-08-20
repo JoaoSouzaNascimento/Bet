@@ -19,9 +19,9 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
     private static final String INSERT_PALPITE = "INSERT INTO BETS_MATCHES (BET_ID, MATCH_ID, SHOT) VALUES (?, ?, ?)";
     private static final String UPDATE_PALPITE = "UPDATE BETS_MATCHES SET SHOT = ? WHERE BET_ID = ? AND MATCH_ID = ?";
     private static final String DELETE_PALPITE = "DELETE FROM BETS_MATCHES WHERE BET_ID = ?";
-    private static final String SELECT_PALPITE_BY_ID = "SELECT BET_ID, MATCH_ID, SHOT FROM BETS_MATCHES WHERE MATCH_ID = ?";
-    private static final String SELECT_ALL_PALPITES = "SELECT BET_ID, MATCH_ID, SHOT FROM BETS_MATCHES";
-
+    private static final String SELECT_PALPITE_BY_MATCH_ID = "SELECT BET_ID, MATCH_ID, SHOT FROM BETS_MATCHES WHERE BET_ID = ? AND MATCH_ID = ?";
+    private static final String SELECT_ALL_PALPITES = "SELECT BET_ID, MATCH_ID, SHOT FROM BETS_MATCHES WHERE BET_ID = ?";
+    
     private Connection getConnection() throws SQLException {
         return ConexaoBdSingleton.getInstance().getConexao();
     }
@@ -43,6 +43,29 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
             }
         } catch (SQLException e) {
             throw new InsercaoException("Erro ao inserir palpite: " + e.getMessage(), e);
+        }
+    }
+    
+    public void createListaDePalpites(int aposta, List<Palpite> palpites) throws InsercaoException {
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(INSERT_PALPITE)) {
+
+            for (Palpite palpite : palpites) {
+                stmt.setInt(1, aposta);
+                stmt.setInt(2, palpite.getPartidaId());
+                stmt.setString(3, palpite.getResultado().name());
+                stmt.addBatch();
+            }
+
+            int[] results = stmt.executeBatch();
+            for (int result : results) {
+                if (result == PreparedStatement.EXECUTE_FAILED) {
+                    throw new InsercaoException("Falha ao inserir um ou mais palpites.");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new InsercaoException("Erro ao inserir palpites: " + e.getMessage(), e);
         }
     }
 
@@ -67,7 +90,7 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
     }
 
     @Override
-    public void deleteAposta(int id) throws DelecaoException {
+    public void deletePalpite(int id) throws DelecaoException {
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(DELETE_PALPITE)) {
 
@@ -83,13 +106,15 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
     }
 
     @Override
-    public Palpite getPalpiteById(int partidaId) throws ConsultaException {
+    public Palpite getPalpiteById(int apostaId, int partidaId) throws ConsultaException {
         try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(SELECT_PALPITE_BY_ID)) {
+             PreparedStatement stmt = connection.prepareStatement(SELECT_PALPITE_BY_MATCH_ID)) {
 
             stmt.setInt(1, partidaId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                	stmt.setInt(1, partidaId);
+                	stmt.setInt(2, partidaId);
                     return new Palpite(
                         rs.getInt("MATCH_ID"),
                         ResultadoPartida.valueOf(rs.getString("SHOT"))
@@ -104,22 +129,24 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
     }
 
     @Override
-    public List<Palpite> getAllApostas() throws ConsultaException {
-        List<Palpite> palpites = new ArrayList<>();
-        try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES);
-             ResultSet rs = stmt.executeQuery()) {
+	public List<Palpite> getAllPalpites(int apostaId) throws ConsultaException {
+	    List<Palpite> palpites = new ArrayList<>();
+	    try (Connection connection = getConnection();
+	         PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES);
+	         ResultSet rs = stmt.executeQuery()) {
+	
+	        while (rs.next()) {
+	        	stmt.setInt(1, apostaId);
+	            Palpite palpite = new Palpite(
+	                rs.getInt("MATCH_ID"),
+	                ResultadoPartida.valueOf(rs.getString("SHOT"))
+	            );
+	            palpites.add(palpite);
+	        }
+	    } catch (SQLException e) {
+	        throw new ConsultaException("Erro ao consultar todos os palpites: " + e.getMessage(), e);
+	    }
+	    return palpites;
+	}
 
-            while (rs.next()) {
-                Palpite palpite = new Palpite(
-                    rs.getInt("MATCH_ID"),
-                    ResultadoPartida.valueOf(rs.getString("SHOT"))
-                );
-                palpites.add(palpite);
-            }
-        } catch (SQLException e) {
-            throw new ConsultaException("Erro ao consultar todas as apostas: " + e.getMessage(), e);
-        }
-        return palpites;
-    }
 }

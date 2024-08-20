@@ -2,7 +2,9 @@ package service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import dao.ApostaDaoPostgresSQL;
+import java.util.UUID;
+
+import dao.ApostaDaoPostgreSQL;
 import exceptions.AtualizacaoException;
 import exceptions.ConsultaException;
 import exceptions.DelecaoException;
@@ -20,7 +22,7 @@ import model.Palpite;
 
 public class UsuarioService {
 	
-	private ApostaDaoPostgresSQL ApostaDao;
+	private ApostaDaoPostgreSQL ApostaDao;
 	private Usuario usuario;
 	private Aposta aposta;
 	
@@ -30,17 +32,20 @@ public class UsuarioService {
 		this.aposta = new Aposta(valorApostado, palpites, false);
 		
 		try {
-			ApostaDao.createAposta(aposta);
+			ApostaDao.createAposta(UUID this.usuario.getId(),aposta);
 		} catch (InsercaoException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void getApostaById(int apostaId) {
-		try {
-			this.aposta =  ApostaDao.getApostaById(apostaId);
-		} catch (ConsultaException e) {
-			e.printStackTrace();
+		
+		if(apostaId != this.aposta.getId()) {
+			try {
+				this.aposta =  ApostaDao.getApostaById(apostaId);
+			} catch (ConsultaException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -73,12 +78,12 @@ public class UsuarioService {
 	}
 	
 	//Manipulação do objeto Palpite.
-	//TODO Implmentar lógica de Palpite,pois é necessário para manipulação.
+	
 	public void addPalpite(Palpite palpite) {
 		try {
 			this.aposta.addPalpites(palpite);
 			
-		} catch (DelecaoException e) {
+		} catch (InsercaoException e) {
 			e.printStackTrace();
 		}
 	}
@@ -95,7 +100,7 @@ public class UsuarioService {
 	
 	public UsuarioService(Usuario usuario) {
 		super();
-		ApostaDao = new ApostaDaoPostgresSQL();;
+		ApostaDao = new ApostaDaoPostgreSQL();;
 		this.usuario = usuario;
 		this.aposta = null;
 	}
