@@ -1,5 +1,6 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +14,7 @@ import exceptions.DelecaoException;
 import exceptions.InsercaoException;
 import model.Aposta;
 
-public class ApostaDaoPostgresSQL implements ApostaDao{
+public class ApostaDaoPostgreSQL implements ApostaDao{
 
 	    @Override
 	    public Aposta createAposta(Aposta aposta) throws InsercaoException{
@@ -23,7 +24,7 @@ public class ApostaDaoPostgresSQL implements ApostaDao{
    		          PreparedStatement ps = conn.prepareStatement(sql)) {
 
 	            ps.setInt(1, aposta.getId());
-	            ps.setDouble(2, aposta.getAmount());
+	            ps.setBigDecimal(2, aposta.getAmount());
 	            ps.setBoolean(3, aposta.isStatus());
 	            ps.executeUpdate();
 
@@ -40,7 +41,7 @@ public class ApostaDaoPostgresSQL implements ApostaDao{
 			try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
   		        PreparedStatement ps = conn.prepareStatement(sql)) {
 
-	            ps.setDouble(1, aposta.getAmount());
+	            ps.setBigDecimal(1, aposta.getAmount());
 	            ps.setBoolean(2, aposta.isStatus());
 	            ps.setInt(3, aposta.getId());
 	            
@@ -78,9 +79,9 @@ public class ApostaDaoPostgresSQL implements ApostaDao{
 	            ResultSet rs = ps.executeQuery();
 	            
 	            if (rs.next()) {
-	                double amount = rs.getDouble("amount");
+	                BigDecimal amount = rs.getBigDecimal("amount");
 	                boolean status = rs.getBoolean("status");
-	                aposta = new Aposta(id, amount, status);
+	                aposta = new Aposta(id, amount, null,status);
 	            }
 	        } catch (SQLException e) {
 	        	throw new ConsultaException("Erro ao buscar aposta por id", e);
@@ -100,10 +101,10 @@ public class ApostaDaoPostgresSQL implements ApostaDao{
 
 	            while (rs.next()) {
 	                int id = rs.getInt("id");
-	                double amount = rs.getDouble("amount");
+	                BigDecimal amount = rs.getBigDecimal("amount");
 	                boolean status = rs.getBoolean("status");
 	                
-	                Aposta aposta = new Aposta(id, amount, status);
+	                Aposta aposta = new Aposta(id, amount, null,status);
 	                apostas.add(aposta);
 	            }
 	        } catch (SQLException e) {

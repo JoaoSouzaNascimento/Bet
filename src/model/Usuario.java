@@ -71,10 +71,6 @@ public class Usuario {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = balance;
-	}
-
 	public boolean isDeleted() {
 		return deleted;
 	}
