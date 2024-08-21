@@ -89,13 +89,13 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
     }
 
     @Override
-    public void deleteUsuario(String id) throws DelecaoException {
+    public void deleteUsuario(UUID id) throws DelecaoException {
         String sql = "UPDATE \"USERS\" SET \"DELETED\" = true WHERE \"ID\" = ?";
         
         try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
              PreparedStatement ps = conn.prepareStatement(sql)) {
              
-            ps.setString(1, id);
+            ps.setObject(1, id);
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected == 0) {
                 throw new DelecaoException("Nenhum usuário encontrado com o ID: " + id);
@@ -106,7 +106,7 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
     }
 
     @Override
-    public List<Usuario> getAllUsuarios() throws ConsultaException {
+    public List<Usuario> getTodosUsuarios() throws ConsultaException {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = "SELECT * FROM \"USERS\"";
         
@@ -128,6 +128,45 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
             }
         } catch (SQLException e) {
             throw new ConsultaException("Erro ao buscar todos os usuários", e);
+        }
+
+        return usuarios;
+    }
+
+    @Override
+    public List<Usuario> getTodosUsuariosAtivos() throws ConsultaException {
+        return getUsuariosPorStatus(false);
+    }
+
+    @Override
+    public List<Usuario> getTodosUsuariosInativos() throws ConsultaException {
+        return getUsuariosPorStatus(true);
+    }
+
+    private List<Usuario> getUsuariosPorStatus(boolean deleted) throws ConsultaException {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT * FROM \"USERS\" WHERE \"DELETED\" = ?";
+        
+        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+             
+            ps.setBoolean(1, deleted);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Usuario usuario = new Usuario(
+                        rs.getObject("id", UUID.class),
+                        rs.getString("username"),
+                        rs.getString("nickname"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getDouble("balance"),
+                        rs.getBoolean("deleted")
+                    );
+                    usuarios.add(usuario);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ConsultaException("Erro ao buscar usuários com status deleted = " + deleted, e);
         }
 
         return usuarios;
