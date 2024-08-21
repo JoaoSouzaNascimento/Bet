@@ -9,12 +9,8 @@ import exceptions.DelecaoException;
 import model.Usuario;
 
 //Atribuições de um usuários:
-//	Realizar uma aposta
 //	Mostrar seus atributos:
 //		Mostar suas apostas
-//	Poder dar vários palpites em uma partida
-//	Poder cancelar determinado palpite em uma aposta, desde que a partida não tenha começado.
-
 public class UsuarioService {
 	
 	private UsuarioDaoPostgreSQL usuarioDao;

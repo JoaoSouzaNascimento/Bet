@@ -34,6 +34,7 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
                         rs.getString("email"),
                         rs.getDouble("balance"),
                         rs.getBoolean("deleted")
+                        rs.getBoolean("is")
                     );
                 }
             }
