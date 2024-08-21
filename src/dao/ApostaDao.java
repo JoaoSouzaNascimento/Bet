@@ -16,6 +16,6 @@ public interface ApostaDao {
     public Aposta updateAposta(Aposta aposta) throws AtualizacaoException;
     public void deleteAposta(int id) throws DelecaoException;
     public Aposta getApostaById(int id) throws ConsultaException;
-    public List<Aposta> getAllApostas() throws ConsultaException;
+    public List<Aposta> getTodasApostasPorUsuarioId(UUID usuarioId) throws ConsultaException;
 }
 

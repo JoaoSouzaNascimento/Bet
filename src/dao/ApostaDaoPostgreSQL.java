@@ -93,8 +93,8 @@ public class ApostaDaoPostgreSQL implements ApostaDao{
 	    }
 
 	    @Override
-	    public List<Aposta> getAllApostas() throws ConsultaException{
-	        String sql = "SELECT * FROM \"APOSTAS\"";
+	    public List<Aposta> getTodasApostasPorUsuarioId(UUID usuarioId) throws ConsultaException{
+	        String sql = "SELECT * FROM \"APOSTAS\" WHERE \"USER_ID\" = ? ";
 	        List<Aposta> apostas = new ArrayList<>();
 	       
 			try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
@@ -102,6 +102,7 @@ public class ApostaDaoPostgreSQL implements ApostaDao{
 				ResultSet rs = ps.executeQuery(sql)) {
 
 	            while (rs.next()) {
+	            	ps.setObject(1, usuarioId);
 	                int id = rs.getInt("id");
 	                BigDecimal amount = rs.getBigDecimal("amount");
 	                boolean status = rs.getBoolean("status");

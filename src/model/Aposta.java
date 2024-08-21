@@ -58,7 +58,7 @@ public class Aposta {
 		this.status = status;
 	}
 
-	public boolean addPalpites(Palpite palpite) {
+	public boolean addPalpite(Palpite palpite) {
 		return this.palpites.add(palpite);
 	}
 	
