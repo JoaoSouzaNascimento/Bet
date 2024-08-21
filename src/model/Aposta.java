@@ -61,5 +61,9 @@ public class Aposta {
 	public boolean addPalpite(Palpite palpite) {
 		return this.palpites.add(palpite);
 	}
+
+	public boolean removePalpiteById(int palpiteId) {
+		return this.palpites.removeIf(palpite -> palpite.getPartidaId() == palpiteId);		
+	}
 	
 }

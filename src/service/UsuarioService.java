@@ -15,11 +15,10 @@ import model.Usuario;
 import model.Palpite;
 
 //Atribuições de um usuários:
-//	Realizar uma aposta
-//	Mostrar seus atributos:
-//		Mostar suas apostas
-//	Poder dar vários palpites em uma partida
-//	Poder cancelar determinado palpite em uma aposta, desde que a partida não tenha começado.
+//  Intanciado sempre que após o login de usuário
+//	Realiza as ações atribuidas a aposta.
+//	Realiza as ações atribuidas a transções.
+//	Mostra e Manipula seus atributos.
 
 public class UsuarioService {
 	
