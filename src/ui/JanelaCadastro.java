@@ -7,10 +7,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
+import org.mindrot.jbcrypt.BCrypt;
+import exceptions.LoginException;
 import model.Usuario;
 //import security.BCriptPassword;
 import security.BCriptPassword;
+import service.AuthService;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -106,8 +108,23 @@ public class JanelaCadastro {
 		JButton btnAddCadastro = new JButton("Add");
 		btnAddCadastro.setMnemonic('A');
 		btnAddCadastro.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}	
+		    public void actionPerformed(ActionEvent e) {
+		        // Captura os dados do formulário
+		        String username = txtName.getText();
+		        String nickname = txtUser_name.getText();
+		        String email = txtEmail.getText();
+		        String password = new String(passwordTeste.getPassword());
+		        
+		        // Chama o AuthService para realizar o cadastro
+		        AuthService authService = new AuthService();
+		        
+		        try {
+		            authService.cadastro(username, nickname, email, password);
+		            JOptionPane.showMessageDialog(frmCadastro, "Cadastro realizado com sucesso!");
+		        } catch (LoginException | IllegalArgumentException ex) {
+		            JOptionPane.showMessageDialog(frmCadastro, "Erro no cadastro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+		        }
+		    }
 		});
 		btnAddCadastro.setBounds(55, 251, 85, 21);
 		frmCadastro.getContentPane().add(btnAddCadastro);
