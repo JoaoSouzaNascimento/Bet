@@ -18,4 +18,5 @@ public interface UsuarioDao {
 	public List<Usuario> getTodosUsuarios() throws ConsultaException;
 	public List<Usuario> getTodosUsuariosAtivos() throws ConsultaException;
 	public List<Usuario> getTodosUsuariosInativos() throws ConsultaException;
+	Usuario getUsuarioById(UUID id) throws ConsultaException;
 }

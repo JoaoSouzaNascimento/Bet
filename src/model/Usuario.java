@@ -68,10 +68,14 @@ public class Usuario {
 		this.email = email;
 	}
 
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
 	public double getBalance() {
 		return balance;
 	}
-
+	
 	public boolean isDeleted() {
 		return deleted;
 	}
@@ -89,4 +93,6 @@ public class Usuario {
 		return "Usuario [id=" + id + ", username=" + username + ", nickname=" + nickname + ", password=" + password
 				+ ", email=" + email + ", balance=" + balance + ", deleted=" + deleted + "]";
 	}
+
+	
 }

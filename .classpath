@@ -6,13 +6,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/João Vitor/Downloads/postgresql-42.7.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/João Vitor/Downloads/jbcrypt-0.4.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/João Vitor/Downloads/gson-2.10.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/João Vitor/Downloads/okhttp-4.12.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/r1k/Documents/tigrinho/Tigrinho/lib/postgresql-42.7.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/r1k/Downloads/gson-2.10.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/r1k/Downloads/okhttp-4.12.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/r1k/Documents/tigrinho/Tigrinho/lib/jbcrypt-0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

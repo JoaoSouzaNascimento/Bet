@@ -44,6 +44,36 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 
         return usuario;
     }
+    
+    
+    @Override
+    public Usuario getUsuarioById(UUID id) throws ConsultaException {
+    	Usuario usuario = null;
+        String sql = "SELECT * FROM \"USERS\" WHERE \"ID\" = ?";
+        
+        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+             
+            ps.setObject(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                        rs.getObject("ID", UUID.class),
+                        rs.getString("USERNAME"),
+                        rs.getString("NICKNAME"),
+                        rs.getString("PASSWORD"),
+                        rs.getString("EMAIL"),
+                        rs.getDouble("BALANCE"),
+                        rs.getBoolean("DELETED"),
+                        rs.getString("ROLE")
+                    );
+                } 
+            }
+        } catch (SQLException e) {
+            throw new ConsultaException("Erro ao buscar o usuário por ID", e);
+        }
+        return usuario;
+    }
 
     @Override
     public Usuario createUsuario(Usuario usuario) throws InsercaoException {

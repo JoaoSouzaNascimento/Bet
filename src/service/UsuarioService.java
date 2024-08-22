@@ -31,6 +31,15 @@ public class UsuarioService {
 		}
 	}
 	
+	public void atualizarUsuario(Usuario usuario) {
+	    try {
+	        usuarioDao.updateUsuario(usuario);
+	    } catch (AtualizacaoException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	
 	public void editarUsuarioNome(Usuario usuario, String username) {
 		//TODO Adicionar validações
 		
@@ -115,6 +124,8 @@ public class UsuarioService {
 			return null;
 		}
 	}
+
+	
 	
 	public List<Usuario> listarTodosUsuarioInativos(){ 
 		

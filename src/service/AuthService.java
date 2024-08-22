@@ -36,7 +36,7 @@ public class AuthService {
 		return usuario;
 	}
 	
-	public void cadastro(String username, String nickname, String email, String password) throws LoginException {
+	public Usuario cadastro(String username, String nickname, String email, String password) throws LoginException {
 	    UsuarioDaoPostgreSQL usuarioDao = new UsuarioDaoPostgreSQL();
 	    
 	    // valida
@@ -66,6 +66,7 @@ public class AuthService {
 	        e.printStackTrace();
 	        throw new LoginException("Erro ao criar o usuário: " + e.getMessage());
 	    }
+	    return usuario;
 	}
 	
 }
