@@ -1,41 +1,128 @@
 package service;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
-import dao.ApostaDaoPostgreSQL;
-import dao.PalpiteDaoPostgreSQL;
+import dao.UsuarioDaoPostgreSQL;
 import exceptions.AtualizacaoException;
 import exceptions.ConsultaException;
 import exceptions.DelecaoException;
-import exceptions.InsercaoException;
-import model.Aposta;
 import model.Usuario;
-import model.Palpite;
 
 //Atribuições de um usuários:
-//  Intanciado sempre que após o login de usuário
-//	Realiza as ações atribuidas a aposta.
-//	Realiza as ações atribuidas a transções.
-//	Mostra e Manipula seus atributos.
-
+//	Mostrar seus atributos:
+//		Mostar suas apostas
 public class UsuarioService {
 	
-	private ApostaDaoPostgreSQL apostaDao;
-	private Usuario usuario;
+	private UsuarioDaoPostgreSQL usuarioDao;
 	
-	
-	public UsuarioService(Usuario usuario) {
+	public UsuarioService() {
 		super();
-		apostaDao = new ApostaDaoPostgreSQL();;
-		this.usuario = usuario;
-		this.aposta = null;
+		usuarioDao = new UsuarioDaoPostgreSQL();
 	}
 	
+	public Usuario getUsuarioPeloEmail(String email) {
+		try {
+			return usuarioDao.getUsuarioByEmail(email);
+		} catch (ConsultaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
+	public void editarUsuarioNome(Usuario usuario, String username) {
+		//TODO Adicionar validações
+		
+		usuario.setUsername(username);
+		
+		try {
+			usuarioDao.updateUsuario(usuario);
+		} catch (AtualizacaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void editarUsuarioApelido(Usuario usuario, String apelido) {
+		//TODO Adicionar validações
+		
+		usuario.setNickname(apelido);
+		
+		try {
+			usuarioDao.updateUsuario(usuario);
+		} catch (AtualizacaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void editarUsuarioSenha(Usuario usuario, String senhaVelha, String novaSenha, String email) {
+		//TODO Adicionar validações
+		
+		usuario.setPassword(novaSenha);
+		
+		try {
+			usuarioDao.updateUsuario(usuario);
+		} catch (AtualizacaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void editarUsuarioEmail(Usuario usuario, String email) {
+		//TODO Adicionar validações
+		
+		usuario.setEmail(email);
+		
+		try {
+			usuarioDao.updateUsuario(usuario);
+		} catch (AtualizacaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void deletarUsuario(Usuario usuario, String email) {
+		//TODO Adicionar validações
+		
+		usuario.setDeleted(true);
+		
+		try {
+			usuarioDao.deleteUsuario(usuario.getId());
+		} catch (DelecaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void listarTodosUsuarios() {
+		try {
+			usuarioDao.getTodosUsuarios();
+		} catch (ConsultaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public List<Usuario> listarTodosUsuarioAtivos(){ 
+		
+		try {
+			return usuarioDao.getTodosUsuariosAtivos();
+		} catch (ConsultaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Usuario> listarTodosUsuarioInativos(){ 
+		
+		try {
+			return usuarioDao.getTodosUsuariosInativos();
+		} catch (ConsultaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
