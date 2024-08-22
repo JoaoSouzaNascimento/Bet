@@ -22,7 +22,7 @@ public class ApostaService {
     }
 
     // Criar nova aposta e persistir no banco de dados
-    public void apostar(Usuario usuario, BigDecimal valorApostado, List<Palpite> palpites) {
+    public void criarAposta(Usuario usuario, BigDecimal valorApostado, List<Palpite> palpites) {
         Aposta aposta = new Aposta(valorApostado, false);
         try {
             apostaDao.createAposta(usuario.getId(), aposta);
@@ -78,6 +78,15 @@ public class ApostaService {
             palpiteDao.createPalpite(aposta.getId(), palpite);
             aposta.addPalpite(palpite);
         } catch (InsercaoException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void getPalpitesDeUmaAposta(Aposta aposta) {
+        try {
+            aposta.setPalpites(palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId()));
+           
+        } catch (ConsultaException e) {
             e.printStackTrace();
         }
     }

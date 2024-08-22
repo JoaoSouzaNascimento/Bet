@@ -8,8 +8,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import dao.CadastroDao;
-import dao.CadastroDaoPostgres;
 import model.Usuario;
 //import security.BCriptPassword;
 import security.BCriptPassword;
@@ -26,7 +24,6 @@ public class JanelaCadastro {
 	private JPasswordField passwordSalvar;
 	private JTextField txtEmail;
 	private JTextField txtUser_name;
-	private CadastroDao cadastroDaoPostgres = new CadastroDaoPostgres();
 	private JTextField txtName;
 	private BCriptPassword  controlPassword = new BCriptPassword();
 
@@ -110,34 +107,6 @@ public class JanelaCadastro {
 		btnAddCadastro.setMnemonic('A');
 		btnAddCadastro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-			    String senhaTeste = new String(passwordTeste.getPassword());
-			    String senhaSalvar = new String(passwordSalvar.getPassword());
-			    
-				controlPassword.validacaoSenha(senhaTeste, senhaSalvar);
-								
-                String senhaCriptografada = controlPassword.criptografarSenha(new String(passwordSalvar.getPassword()));
-				String id_user = cadastroDaoPostgres.generateRandomString(10);
-				String name = txtName.getText();
-				String user_name = txtUser_name.getText();
-				String email = txtEmail.getText();
-				Boolean ativo = true;
-				
-				if(user_name.isEmpty() || email.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Campo User ou email não pode ser vazio");
-					return;
-				}
-				
-				Usuario usuario = new Usuario(id_user, name, user_name, senhaCriptografada, email, ativo);
-				
-				try {
-					cadastroDaoPostgres.inserir(usuario);
-					JOptionPane.showMessageDialog(null, "Usuário " + usuario + " adicionado com sucesso");
-				} catch (SQLException e2) {
-					// TODO: handle exception
-					JOptionPane.showMessageDialog(null, "Erro ao adicionar usuário");
-					e2.printStackTrace();
-				}
 			}	
 		});
 		btnAddCadastro.setBounds(55, 251, 85, 21);

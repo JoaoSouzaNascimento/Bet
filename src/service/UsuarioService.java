@@ -8,9 +8,6 @@ import exceptions.ConsultaException;
 import exceptions.DelecaoException;
 import model.Usuario;
 
-//Atribuições de um usuários:
-//	Mostrar seus atributos:
-//		Mostar suas apostas
 public class UsuarioService {
 	
 	private UsuarioDaoPostgreSQL usuarioDao;

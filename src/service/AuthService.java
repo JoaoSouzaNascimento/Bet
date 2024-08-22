@@ -2,7 +2,7 @@ package service;
 
 import java.util.UUID;
 
-import org.mindrot.bcrypt.BCrypt;
+import org.mindrot.jbcrypt.BCrypt;
 
 import dao.UsuarioDaoPostgreSQL;
 import exceptions.ConsultaException;

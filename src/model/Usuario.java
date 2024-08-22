@@ -11,10 +11,11 @@ public class Usuario {
 	private String email;
 	private double balance;
 	private boolean deleted;
+	private String role;
 
 	
 
-	public Usuario(UUID id, String username, String nickname, String password, String email, double balance, boolean deleted) {
+	public Usuario(UUID id, String username, String nickname, String password, String email, double balance, boolean deleted, String role) {
 		this.id = id;
 		this.username = username;
 		this.nickname = nickname;
@@ -22,6 +23,7 @@ public class Usuario {
 		this.email = email;
 		this.balance = balance;
 		this.deleted = deleted;
+		this.role = role;
 	}
 	
 	public Usuario(UUID id, String username, String nickname, String password, String email) {

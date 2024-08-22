@@ -33,8 +33,8 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
                         rs.getString("password"),
                         rs.getString("email"),
                         rs.getDouble("balance"),
-                        rs.getBoolean("deleted")
-                        rs.getBoolean("is")
+                        rs.getBoolean("deleted"),
+                        rs.getString("role")
                     );
                 }
             }
@@ -123,7 +123,8 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
                     rs.getString("password"),
                     rs.getString("email"),
                     rs.getDouble("balance"),
-                    rs.getBoolean("deleted")
+                    rs.getBoolean("deleted"),
+                    rs.getString("role")
                 );
                 usuarios.add(usuario);
             }
@@ -161,7 +162,8 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
                         rs.getString("password"),
                         rs.getString("email"),
                         rs.getDouble("balance"),
-                        rs.getBoolean("deleted")
+                        rs.getBoolean("deleted"),
+                        rs.getString("role")
                     );
                     usuarios.add(usuario);
                 }
