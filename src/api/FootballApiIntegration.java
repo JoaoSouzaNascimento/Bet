@@ -1,71 +1,52 @@
 package api;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonArray;
-import okhttp3.*;
+import java.util.List;
 
-import java.io.IOException;
+import api.dto.Bet;
+import api.dto.FixtureResponse;
+import api.dto.OddValue;
+import api.dto.OddsResponse;
+import api.dto.Bookmaker;
+import service.FootballApiService;
+
+import java.util.List;
+import java.util.Scanner;
 
 public class FootballApiIntegration {
-
-    private static final String API_KEY = "c3228facec7d0ee8fe14fc3b6d71742d"; // Substitua pela sua chave de API
-    private static final String BASE_URL = "https://v3.football.api-sports.io";
-
-    private final OkHttpClient client;
-    private final Gson gson;
-
-    public FootballApiIntegration() {
-        this.client = new OkHttpClient();
-        this.gson = new Gson();
-    }
-
-    public void fetchAndCreateMatches() throws IOException {
-        String url = BASE_URL + "/fixtures?season=2024&league=39"; // Exemplo: Premier League (id 39) temporada 2024
-
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("x-apisports-key", API_KEY)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                String responseBody = response.body().string();
-                JsonObject jsonResponse = gson.fromJson(responseBody, JsonObject.class);
-                
-                // Processando o JSON e criando os eventos (partidas)
-                JsonArray matches = jsonResponse.getAsJsonArray("response");
-                for (int i = 0; i < matches.size(); i++) {
-                    JsonObject match = matches.get(i).getAsJsonObject();
-                    createMatchFromJson(match);
-                }
-            } else {
-                System.err.println("Erro ao fazer requisição: " + response.message());
-            }
-        }
-    }
-
-    private void createMatchFromJson(JsonObject matchJson) {
-        JsonObject fixture = matchJson.getAsJsonObject("fixture");
-        JsonObject teams = matchJson.getAsJsonObject("teams");
-
-        String matchId = fixture.get("id").getAsString();
-        String date = fixture.get("date").getAsString();
-        String homeTeam = teams.getAsJsonObject("home").get("name").getAsString();
-        String awayTeam = teams.getAsJsonObject("away").get("name").getAsString();
-
-        // Exemplo: Criando o evento de partida na sua aplicação
-        System.out.printf("Criando partida: %s vs %s em %s (ID: %s)\n", homeTeam, awayTeam, date, matchId);
-        
-        // Aqui você implementaria a lógica para salvar ou manipular as partidas na sua aplicação.
-    }
-
     public static void main(String[] args) {
-        FootballApiIntegration integration = new FootballApiIntegration();
+
+        String apiKey = "c3228facec7d0ee8fe14fc3b6d71742d";
+        String apiHost = "v3.football.api-sports.io";
+
+        FootballApiService apiService = new FootballApiService(apiKey, apiHost);
+
         try {
-            integration.fetchAndCreateMatches();
-        } catch (IOException e) {
+            System.out.println("Enviando requisição de fixtures...");
+            List<FixtureResponse> fixtures = apiService.getFixtures("71", "2024", "2024-08-24", "America/Bahia");
+
+            for (FixtureResponse fixture : fixtures) {
+                String fixtureId = String.valueOf(fixture.getFixture().getId());
+
+                System.out.println("Buscando odds para fixture ID: " + fixtureId);
+                List<OddsResponse> oddsResponse = apiService.getOddsForFixture(fixtureId, "71", "2024", "3", "America/Bahia");
+                
+                for(OddsResponse oddsResponse2 : oddsResponse) {
+                for (Bookmaker bookmakerResponse : oddsResponse2.getResponse()) {
+           
+                    for (Bet bet : bookmakerResponse.getBets()) {
+                        if (bet.getName().equals("Match Winner")) {
+                            for (OddValue value : bet.getValues()) {
+                                System.out.println("Resultado: " + value.getValue() + " - Odd: " + value.getOdd());
+                            }
+                        }
+                    }
+                }
+                }
+                System.out.println("-----------------------------------------");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Fim do programa");
     }
 }

@@ -1,5 +1,5 @@
 package model;
 
 public enum StatusPartida {
-	ABERTO, FECHADO, TERMINADO;
+	PENDENTE, ACONTECENDO, TERMINADO;
 }
