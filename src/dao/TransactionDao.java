@@ -15,4 +15,5 @@ public interface TransactionDao {
     public Transaction updateTransaction(Transaction transaction) throws AtualizacaoException;
     public List<Transaction> listTransactions() throws ConsultaException;
     public void deleteTransaction(Transaction transaction) throws DelecaoException;
+    List<Transaction> getAllTransactionsByUser(UUID userId) throws ConsultaException;
 }

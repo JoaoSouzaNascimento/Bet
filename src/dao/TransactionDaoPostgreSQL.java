@@ -17,26 +17,36 @@ import model.Transaction;
 
 public class TransactionDaoPostgreSQL implements TransactionDao {
 
-    @Override
-    public Transaction createTransaction(Transaction transaction) throws InsercaoException {
-        String sql = "INSERT INTO \"TRANSACTIONS\" (\"USER_ID\", \"TYPE\", \"STATUS\", \"AMOUNT\", \"CREATED_AT\", \"UPDATED_AT\") VALUES (?, ?, ?, ?, ?, ?)";
-        
-        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-             
-            ps.setObject(1, transaction.getUserId());
-            ps.setString(2, transaction.getType());
-            ps.setInt(3, transaction.getStatus());
-            ps.setBigDecimal(4, transaction.getAmount());
-            ps.setTimestamp(5, transaction.getCreatedAt());
-            ps.setTimestamp(6, transaction.getUpdatedAt());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new InsercaoException("Erro ao criar transação", e);
-        }
+	@Override
+	public Transaction createTransaction(Transaction transaction) throws InsercaoException {
+	    String sql = "INSERT INTO \"TRANSACTIONS\" (\"USER_ID\", \"TYPE\", \"STATUS\", \"AMOUNT\", \"CREATED_AT\", \"UPDATED_AT\") VALUES (?, ?, ?, ?, ?, ?)";
 
-        return transaction;
-    }
+	    try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+	         PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) { // Solicita geração de chaves
+	         
+	        ps.setObject(1, transaction.getUserId());
+	        ps.setString(2, transaction.getType());
+	        ps.setInt(3, transaction.getStatus());
+	        ps.setBigDecimal(4, transaction.getAmount());
+	        ps.setTimestamp(5, transaction.getCreatedAt());
+	        ps.setTimestamp(6, transaction.getUpdatedAt());
+	        
+	        int affectedRows = ps.executeUpdate(); 
+
+	        if (affectedRows > 0) {
+	            try (ResultSet generatedKeys = ps.getGeneratedKeys()) { // gera um id para transação
+	                if (generatedKeys.next()) {
+	                    int generatedId = generatedKeys.getInt(1); 
+	                    transaction.setId(generatedId); 
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new InsercaoException("Erro ao criar transação", e);
+	    }
+
+	    return transaction; // retorna transação com id gerado
+	}
 
     @Override
     public Transaction updateTransaction(Transaction transaction) throws AtualizacaoException {
@@ -87,6 +97,36 @@ public class TransactionDaoPostgreSQL implements TransactionDao {
 
         return transactions;
     }
+    
+    public List<Transaction> getAllTransactionsByUser(UUID userId) throws ConsultaException {
+        String sql = "SELECT * FROM \"TRANSACTIONS\" WHERE \"USER_ID\" = ?";
+        List<Transaction> transactions = new ArrayList<>();
+
+        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Transaction transaction = new Transaction(
+                        rs.getInt("ID"),
+                        (UUID) rs.getObject("USER_ID"),
+                        rs.getString("TYPE"),
+                        rs.getInt("STATUS"),
+                        rs.getBigDecimal("AMOUNT"),
+                        rs.getTimestamp("CREATED_AT"),
+                        rs.getTimestamp("UPDATED_AT")
+                    );
+                    transactions.add(transaction);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ConsultaException("Erro ao consultar transações", e);
+        }
+
+        return transactions;
+    }
+
 
     @Override
     public void deleteTransaction(Transaction transaction) throws DelecaoException {
