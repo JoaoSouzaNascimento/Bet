@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "USERS" (
 	"PASSWORD" varchar(255) NOT NULL,
 	"BALANCE" numeric(10,0) NOT NULL,
 	"DELETED" boolean NOT NULL,
-	"POST" varchar(255) NOT NULL,
+	"ROLE" varchar(255) NOT NULL,
 	"CREATE_AT" timestamp with time zone NOT NULL,
 	"UPDATE_AT" timestamp with time zone NOT NULL,
 	PRIMARY KEY ("ID")

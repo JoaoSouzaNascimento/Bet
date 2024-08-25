@@ -42,11 +42,11 @@ public class PartidaService {
 				boolean casaGanhou = Boolean.parseBoolean(fixture.getTeams().getHome().getWinner());
 				boolean foraGanhou = Boolean.parseBoolean(fixture.getTeams().getHome().getWinner());
 
-				List<OddsResponse> oddsResponse = footballService.getOddsForFixture(fixtureId, league, season, bookmaker,
+				List<OddsResponse> oddsResponseLista = footballService.getOddsForFixture(fixtureId, league, season, bookmaker,
 						timezone);
 
-				for (OddsResponse oddsResponse2 : oddsResponse) {
-					for (Bookmaker bookmakerResponse : oddsResponse2.getResponse()) {
+				for (OddsResponse oddsResponse : oddsResponseLista) {
+					for (Bookmaker bookmakerResponse : oddsResponse.getResponse()) {
 
 						for (Bet bet : bookmakerResponse.getBets()) {
 							if (bet.getName().equals("Match Winner")) {
