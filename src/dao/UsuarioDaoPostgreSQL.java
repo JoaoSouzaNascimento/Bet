@@ -48,16 +48,24 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
     
     @Override
     public Usuario getUsuarioById(UUID id) throws ConsultaException {
-    	Usuario usuario = null;
+        Usuario usuario = null;
         String sql = "SELECT * FROM \"USERS\" WHERE \"ID\" = ?";
         
+        System.out.println("Executando consulta para ID: " + id);
+
         try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-             
-            ps.setObject(1, id);
+            
+        	ps.setObject(1, id);
+        	
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Usuario(
+                    System.out.println("Dados retornados do ResultSet:");
+                    System.out.println("ID: " + rs.getObject("ID"));
+                    System.out.println("Username: " + rs.getString("USERNAME"));
+                    // Adicione prints para outros campos conforme necessário
+
+                    usuario = new Usuario(
                         rs.getObject("ID", UUID.class),
                         rs.getString("USERNAME"),
                         rs.getString("NICKNAME"),
@@ -65,15 +73,20 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
                         rs.getString("EMAIL"),
                         rs.getDouble("BALANCE"),
                         rs.getBoolean("DELETED"),
-                        rs.getString("ROLE")
+                        rs.getString("POST") // Assumindo que o nome da coluna é POST, confirme com o schema
                     );
-                } 
+                    System.out.println("Usuário encontrado: " + usuario);
+                } else {
+                    System.out.println("Nenhum usuário encontrado para o ID: " + id);
+                }
             }
         } catch (SQLException e) {
             throw new ConsultaException("Erro ao buscar o usuário por ID", e);
         }
         return usuario;
     }
+
+
 
     @Override
     public Usuario createUsuario(Usuario usuario) throws InsercaoException {
