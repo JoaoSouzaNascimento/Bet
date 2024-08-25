@@ -21,8 +21,8 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
         Usuario usuario = null;
 
         try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
-             PreparedStatement ps = conn.prepareStatement("SELECT * from USERS WHERE email = ?")) {
-
+        		PreparedStatement ps = conn.prepareStatement("SELECT * from \"USERS\" WHERE \"EMAIL\" = ?")) {
+        	
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
