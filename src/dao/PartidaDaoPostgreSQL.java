@@ -24,7 +24,7 @@ public class PartidaDaoPostgreSQL implements PartidaDao {
 
 	@Override
 	public Partida createPartida(Partida partida) throws InsercaoException {
-		String sql = "INSERT INTO \"MATCHES\" (\"ID\", \"TEAM_HOME\", \"TEAM_AWAY\", \"DATE\", \"TIME\", \"STATUS\", \"RESULT\", \"HOME_WIN_ODD\", \"AWAY_WIN_ODD\", \"DRAW_ODD\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO \"MATCHES\" (\"TEAM_HOME\", \"TEAM_AWAY\", \"DATE\", \"TIME\", \"STATUS\", \"RESULT\", \"HOME_WIN_ODD\", \"AWAY_WIN_ODD\", \"DRAW_ODD\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
              PreparedStatement ps = conn.prepareStatement(sql)) {

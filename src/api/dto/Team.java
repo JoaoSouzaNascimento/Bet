@@ -5,25 +5,36 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Team {
-    @JsonProperty("name")
-    private String name;
+	@JsonProperty("name")
+	private String name;
 
-    @JsonProperty("logo")
-    private String logo;
+	@JsonProperty("logo")
+	private String logo;
 
-    public String getName() {
-        return name;
-    }
+	@JsonProperty("winner")
+	private String winner;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getWinner() {
+		return winner;
+	}
 
-    public String getLogo() {
-        return logo;
-    }
+	public void setWinner(String winner) {
+        this.winner = winner;
+	}
 
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
 }

@@ -17,10 +17,6 @@ public class UsuarioService {
 		usuarioDao = new UsuarioDaoPostgreSQL();
 	}
 	
-	
-	
-	
-	
 	public Usuario getUsuarioPeloEmail(String email) {
 		try {
 			return usuarioDao.getUsuarioByEmail(email);
