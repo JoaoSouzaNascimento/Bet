@@ -107,6 +107,7 @@ public class JanelaCadastro {
 		btnAddCadastro.setMnemonic('A');
 		btnAddCadastro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 			}	
 		});
 		btnAddCadastro.setBounds(55, 251, 85, 21);
