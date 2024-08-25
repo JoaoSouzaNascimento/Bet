@@ -13,8 +13,6 @@ import api.dto.Bookmaker;
 import api.dto.FixtureResponse;
 import api.dto.OddValue;
 import api.dto.OddsResponse;
-import dao.PartidaDao;
-import dao.PartidaDaoPostgreSQL;
 import model.Partida;
 import model.ResultadoPartida;
 
