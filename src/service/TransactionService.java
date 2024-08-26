@@ -21,13 +21,14 @@ public class TransactionService {
 		this.usuarioDao = new UsuarioDaoPostgreSQL();
     }
     
-    public void createTransaction(Transaction transaction) throws InsercaoException {
+    public void createTransaction(Transaction transaction, Usuario usuario) throws InsercaoException {
         try {
-            transactionDao.createTransaction(transaction);
+            transactionDao.createTransaction(transaction, usuario);
         } catch (InsercaoException e) {
             throw new InsercaoException("Erro ao criar transação", e);
         }
     }
+
 
     public void depositar(UUID userId, BigDecimal amount) throws InsercaoException, AtualizacaoException, ConsultaException {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -55,8 +56,11 @@ public class TransactionService {
             new Timestamp(System.currentTimeMillis())
         );
 
-        // salva transacao
-        createTransaction(transaction);
+        try {
+            createTransaction(transaction, usuario);
+        } catch (InsercaoException e) {
+            throw new InsercaoException("Erro ao criar transação de depósito", e);
+        }
     }
 
     public void sacar(UUID userId, BigDecimal amount) throws InsercaoException, AtualizacaoException, ConsultaException {
@@ -88,8 +92,11 @@ public class TransactionService {
             new Timestamp(System.currentTimeMillis())
         );
 
-        // salva transacao
-        createTransaction(transaction);
+        try {
+            createTransaction(transaction, usuario);
+        } catch (InsercaoException e) {
+            throw new InsercaoException("Erro ao criar transação de saque", e);
+        }
     }
     
     public List<Transaction> getAllTransactionsByUser(UUID userId) throws ConsultaException {

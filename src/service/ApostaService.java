@@ -133,7 +133,7 @@ public class ApostaService {
 	}
 
 	// Atualiza o valor apostado
-	public void atualizarValorApostado(Aposta aposta, float novoValorApostado) {
+	public void atualizarValorApostado(Aposta aposta, BigDecimal novoValorApostado) {
 		aposta.setAmount(novoValorApostado);
 		try {
 			apostaDao.updateAposta(aposta);

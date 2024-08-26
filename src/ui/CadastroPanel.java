@@ -5,13 +5,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import dao.UsuarioDaoPostgreSQL;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import service.AuthService;
+import exceptions.CadastroException;
 import exceptions.LoginException;
 import model.Usuario;
-
+import model.CargoUsuario;
 public class CadastroPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -20,7 +24,7 @@ public class CadastroPanel extends JPanel {
     private JTextField txtEmail;
     private JTextField txtUserName;
     private JTextField txtName;
-    private AuthService authService = new AuthService();
+    private AuthService authService = new AuthService(new UsuarioDaoPostgreSQL());
 
     /**
      * Create the panel.
@@ -86,9 +90,9 @@ public class CadastroPanel extends JPanel {
                 String nickname = txtUserName.getText();
                 String email = txtEmail.getText();
                 String password = new String(passwordTeste.getPassword());
-
+                CargoUsuario cargo = CargoUsuario.USUARIO;
                 try {
-                    Usuario usuario = authService.cadastro(username, nickname, email, password);
+                    Usuario usuario = authService.cadastro(username, nickname, email, password, cargo);
                     JOptionPane.showMessageDialog(CadastroPanel.this, "Cadastro realizado com sucesso!");
 
                     JanelaPrincipal janelaPrincipal = new JanelaPrincipal();
@@ -97,7 +101,7 @@ public class CadastroPanel extends JPanel {
 
                     CadastroPanel.this.getTopLevelAncestor().setVisible(false);
 
-                } catch (LoginException | IllegalArgumentException ex) {
+                } catch (CadastroException | IllegalArgumentException ex) {
                     JOptionPane.showMessageDialog(CadastroPanel.this, "Erro no cadastro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }

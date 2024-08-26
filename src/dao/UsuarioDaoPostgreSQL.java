@@ -30,72 +30,6 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 		try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
 				PreparedStatement ps = conn.prepareStatement(SELECT_USER_BY_EMAIL)) {
 
-<<<<<<< HEAD
-        return usuario;
-    }
-    
-    
-    @Override
-    public Usuario getUsuarioById(UUID id) throws ConsultaException {
-        Usuario usuario = null;
-        String sql = "SELECT * FROM \"USERS\" WHERE \"ID\" = ?";
-        
-        System.out.println("Executando consulta para ID: " + id);
-
-        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-        	ps.setObject(1, id);
-        	
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    System.out.println("Dados retornados do ResultSet:");
-                    System.out.println("ID: " + rs.getObject("ID"));
-                    System.out.println("Username: " + rs.getString("USERNAME"));
-                    // Adicione prints para outros campos conforme necessário
-
-                    usuario = new Usuario(
-                        rs.getObject("ID", UUID.class),
-                        rs.getString("USERNAME"),
-                        rs.getString("NICKNAME"),
-                        rs.getString("PASSWORD"),
-                        rs.getString("EMAIL"),
-                        rs.getDouble("BALANCE"),
-                        rs.getBoolean("DELETED"),
-                        rs.getString("POST") // Assumindo que o nome da coluna é POST, confirme com o schema
-                    );
-                    System.out.println("Usuário encontrado: " + usuario);
-                } else {
-                    System.out.println("Nenhum usuário encontrado para o ID: " + id);
-                }
-            }
-        } catch (SQLException e) {
-            throw new ConsultaException("Erro ao buscar o usuário por ID", e);
-        }
-        return usuario;
-    }
-
-
-
-    @Override
-    public Usuario createUsuario(Usuario usuario) throws InsercaoException {
-        String sql = "INSERT INTO \"USERS\" (\"ID\", \"USERNAME\", \"NICKNAME\", \"PASSWORD\", \"EMAIL\", \"BALANCE\", \"DELETED\") VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-             
-            ps.setObject(1, usuario.getId());
-            ps.setString(2, usuario.getUsername());
-            ps.setString(3, usuario.getNickname());
-            ps.setString(4, usuario.getPassword());
-            ps.setString(5, usuario.getEmail());
-            ps.setDouble(6, usuario.getBalance());
-            ps.setBoolean(7, usuario.isDeleted());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new InsercaoException("Erro ao criar usuário", e);
-        }
-=======
 			ps.setString(1, email);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
@@ -108,7 +42,6 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 
 		return null;
 	}
->>>>>>> 7fc9b8447c68aae5c1f7ae2d331ae49a56f64127
 
 	@Override
 	public Usuario getUsuarioById(UUID id) throws ConsultaException {

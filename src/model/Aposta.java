@@ -9,12 +9,12 @@ import java.util.List;
 public class Aposta {
 
 	private int id;
-	private float amount;
+	private BigDecimal amount;
 	private List<Palpite> palpites;
 	private Boolean status;
 	private LocalDate date;
 	
-	public Aposta(int id, float amount, List<Palpite> palpites, boolean status, LocalDate date) {
+	public Aposta(int id, BigDecimal amount, List<Palpite> palpites, boolean status, LocalDate date) {
 		super();
 		this.id = id;
 		this.amount = amount;
@@ -23,7 +23,7 @@ public class Aposta {
 		this.date = date;
 	}
 	
-	public Aposta(float amount, List<Palpite> palpites, String timeZone) {
+	public Aposta(BigDecimal amount, List<Palpite> palpites, String timeZone) {
 		super();
 		this.amount = amount;
 		this.palpites = palpites;
@@ -37,10 +37,10 @@ public class Aposta {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	public List<Palpite> getPalpites() {
