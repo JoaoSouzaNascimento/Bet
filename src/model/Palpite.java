@@ -6,26 +6,25 @@ public class Palpite {
 
 	private int partidaId;
 	private ResultadoPartida resultado;
+	private float odd;
 		
-	public Palpite(int partidaId, ResultadoPartida resultado) {
+	public Palpite(int partidaId, ResultadoPartida resultado, float odd) {
 		super();
 		this.partidaId = partidaId;
 		this.resultado = resultado;
+		this.odd = odd;
 	}
 	
 	public int getPartidaId() {
 		return partidaId;
 	}
-	public void setPartidaId(int partidaId) {
-		this.partidaId = partidaId;
-	}
 	public ResultadoPartida getResultado() {
 		return resultado;
 	}
-	public void setResultado(ResultadoPartida resultado) {
-		this.resultado = resultado;
-	}
 
+	public float getOdd() {
+		return odd;
+	}
 	
 	@Override
 	public String toString() {

@@ -12,7 +12,7 @@ public class Aposta {
 	private float amount;
 	private List<Palpite> palpites;
 	private Boolean status;
-	private LocalDate date; 
+	private LocalDate date;
 	
 	public Aposta(int id, float amount, List<Palpite> palpites, boolean status, LocalDate date) {
 		super();
@@ -28,7 +28,7 @@ public class Aposta {
 		this.amount = amount;
 		this.palpites = palpites;
 		this.status = null;
-		LocalDate.now(ZoneId.of(timeZone));
+		this.date = LocalDate.now(ZoneId.of(timeZone));
 	}
 	
 	public int getId() {
