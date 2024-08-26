@@ -94,6 +94,7 @@ public class PartidaService {
 		}
 		return partidas;
 	}
+}
 
 //	public List<Partida> BuscarPartidasPorDia(String league, String season, String date, String timezone,
 //			String bookmaker) {
@@ -147,4 +148,3 @@ public class PartidaService {
 //		return partidas;
 //	}
 
-}

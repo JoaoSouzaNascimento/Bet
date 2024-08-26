@@ -376,4 +376,5 @@ public class UsuarioPanel extends JFrame {
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
+    
 }

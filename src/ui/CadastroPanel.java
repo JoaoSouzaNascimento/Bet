@@ -9,6 +9,8 @@ import javax.swing.JTextField;
 import dao.UsuarioDaoPostgreSQL;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import service.AuthService;
@@ -28,8 +30,9 @@ public class CadastroPanel extends JPanel {
 
     /**
      * Create the panel.
+     * @param parentFrame 
      */
-    public CadastroPanel() {
+    public CadastroPanel(JFrame parentFrame) {
         placeComponents();
     }
 
