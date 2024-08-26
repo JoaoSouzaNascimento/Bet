@@ -12,7 +12,7 @@ import exceptions.InsercaoException;
 
 public interface ApostaDao {
 	
-    public Aposta createAposta(UUID usuarioId, Aposta aposta) throws InsercaoException;
+    public Aposta createAposta(Aposta aposta) throws InsercaoException;
     public Aposta updateAposta(Aposta aposta) throws AtualizacaoException;
     public void deleteAposta(int id) throws DelecaoException;
     public Aposta getApostaById(int id) throws ConsultaException;

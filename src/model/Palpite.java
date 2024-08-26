@@ -1,51 +1,54 @@
 package model;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Palpite {
-
+	
+	private int apostaId;
 	private int partidaId;
 	private ResultadoPartida resultado;
-	private float odd;
+	private BigDecimal odd;
 		
-	public Palpite(int partidaId, ResultadoPartida resultado, float odd) {
+	public Palpite(int partidaId, int apostaIDId,ResultadoPartida resultado, BigDecimal odd) {
 		super();
+		this.apostaId = apostaId;
 		this.partidaId = partidaId;
 		this.resultado = resultado;
 		this.odd = odd;
 	}
-	
+
+	public int getApostaId() {
+		return apostaId;
+	}
+
+	public void setApostaId(int apostaId) {
+		this.apostaId = apostaId;
+	}
+
 	public int getPartidaId() {
 		return partidaId;
 	}
+
+	public void setPartidaId(int partidaId) {
+		this.partidaId = partidaId;
+	}
+
 	public ResultadoPartida getResultado() {
 		return resultado;
 	}
 
-	public float getOdd() {
-		return odd;
-	}
-	
-	@Override
-	public String toString() {
-		return "Palpite [partidaId=" + partidaId + ", resultado=" + resultado + "]";
+	public void setResultado(ResultadoPartida resultado) {
+		this.resultado = resultado;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Palpite other = (Palpite) obj;
-		return partidaId == other.partidaId && resultado == other.resultado;
+	public BigDecimal getOdd() {
+		return odd;
+	}
+
+	public void setOdd(BigDecimal odd) {
+		this.odd = odd;
 	}
 	
-	@Override
-	public int hashCode() {
-		return Objects.hash(partidaId, resultado);
-	}
 	
 }

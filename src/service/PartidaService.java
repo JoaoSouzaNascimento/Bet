@@ -94,6 +94,13 @@ public class PartidaService {
 		}
 		return partidas;
 	}
+
+
+
+	public FixtureData getFixtureDataById(String fixtureId) throws Exception {
+		FixtureResponse fixture = footballService.getFixtureById(fixtureId);
+		return getFixtureData(fixture);
+	}
 }
 
 //	public List<Partida> BuscarPartidasPorDia(String league, String season, String date, String timezone,

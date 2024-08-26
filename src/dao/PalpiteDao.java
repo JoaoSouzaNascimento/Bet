@@ -10,10 +10,10 @@ import model.Palpite;
 
 public interface PalpiteDao {
 	
-	public Palpite createPalpite(int aposta, Palpite palpite) throws InsercaoException;
-	public Palpite updatePalpite(int aposta, Palpite palpite) throws AtualizacaoException;
-    public void deletePalpite(int id) throws DelecaoException;
+	public Palpite createPalpite(Palpite palpite) throws InsercaoException;
+	public Palpite updatePalpite(Palpite palpite) throws AtualizacaoException;
+    public void deletePalpite(int apostaId, int partidaId) throws DelecaoException;
     public Palpite getPalpiteById(int apostaId, int partidaId) throws ConsultaException;
     public List<Palpite> getTodosPalpitesDeUmaAposta(int apostaId) throws ConsultaException;
-	public void createListaDePalpites(int aposta, List<Palpite> palpites) throws InsercaoException;
+	public void createListaDePalpites(List<Palpite> palpites) throws InsercaoException;
 }

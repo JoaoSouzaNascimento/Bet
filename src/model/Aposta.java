@@ -3,70 +3,74 @@ package model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Aposta {
 
-	private int id;
+	private Integer id;
+	private UUID userId;
 	private BigDecimal amount;
-	private List<Palpite> palpites;
 	private Boolean status;
 	private LocalDate date;
-	
-	public Aposta(int id, BigDecimal amount, List<Palpite> palpites, boolean status, LocalDate date) {
-		super();
-		this.id = id;
+
+	private Aposta(UUID userID, BigDecimal amount, LocalDate date) {
+		this.userId = userID;
 		this.amount = amount;
-		this.palpites = palpites;
-		this.status = status;
+		this.status = null;
 		this.date = date;
 	}
-	
-	public Aposta(BigDecimal amount, List<Palpite> palpites, String timeZone) {
-		super();
-		this.amount = amount;
-		this.palpites = palpites;
-		this.status = null;
-		this.date = LocalDate.now(ZoneId.of(timeZone));
+
+	public Aposta(Integer id, UUID userID, BigDecimal amount, List<Palpite> palpites, Boolean status, LocalDate date) {
+		this(userID, amount, date);
+		this.id = id;
+		this.status = status;
 	}
-	
-	public int getId() {
+
+	public Aposta(UUID userID, BigDecimal amount, List<Palpite> palpites, String timeZone) {
+		this(userID, amount, LocalDate.now(ZoneId.of(timeZone)));
+		this.id = null;
+		this.status = null;
+	}
+
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+
+	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	public UUID getUserId() {
+		return userId;
+	}
+
+	public void setUserId(UUID userId) {
+		this.userId = userId;
+	}
+
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-	public List<Palpite> getPalpites() {
-		return palpites;
-	}
-	public void setPalpites(List<Palpite> palpites) {
-		this.palpites = palpites;
-	}
-	public boolean isStatus() {
+
+	public Boolean getStatus() {
 		return status;
 	}
-	public void setStatus(boolean status) {
+
+	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 
 	public LocalDate getDate() {
 		return date;
 	}
-	
-	public boolean addPalpite(Palpite palpite) {
-		return this.palpites.add(palpite);
+
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
-	public boolean removePalpiteById(int palpiteId) {
-		return this.palpites.removeIf(palpite -> palpite.getPartidaId() == palpiteId);		
-	}
-	
-	
 }

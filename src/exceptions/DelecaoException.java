@@ -1,6 +1,8 @@
 package exceptions;
 
-public class DelecaoException extends Exception {
+import java.sql.SQLException;
+
+public class DelecaoException extends SQLException {
     public DelecaoException(String message) {
         super(message);
     }

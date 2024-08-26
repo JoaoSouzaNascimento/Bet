@@ -4,39 +4,33 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
 public class ConexaoBdSingleton {
 
-    private Connection conexao;
-    private static ConexaoBdSingleton instance;
+	private Connection conexao;
+	private static ConexaoBdSingleton instance;
 
-    private ConexaoBdSingleton() {
-        connect();
-    }
+	private ConexaoBdSingleton() throws SQLException {
+		connect();
+	}
 
-    private void connect() {
-        try {
-            conexao = DriverManager.getConnection("jdbc:postgresql://localhost:5434/tigrinho", "postgres", "postgres");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	private void connect() throws SQLException {
 
-    public Connection getConexao() {
-        try {
-            if (conexao == null || conexao.isClosed()) {
-                connect();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return conexao;
-    }
+		conexao = DriverManager.getConnection("jdbc:postgresql://localhost:5434/tigrinho", "postgres", "postgres");
 
-    public static ConexaoBdSingleton getInstance() {
-        if(instance == null) {
-            instance = new ConexaoBdSingleton();
-        }
-        return instance;
-    }
+	}
+
+	public Connection getConexao() throws SQLException {
+
+		if (conexao == null || conexao.isClosed()) {
+			connect();
+		}
+		return conexao;
+	}
+
+	public static ConexaoBdSingleton getInstance() throws SQLException {
+		if (instance == null) {
+			instance = new ConexaoBdSingleton();
+		}
+		return instance;
+	}
 }

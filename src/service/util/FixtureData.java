@@ -96,5 +96,12 @@ public class FixtureData {
 	public void setForaGanhou(boolean foraGanhou) {
 		this.foraGanhou = foraGanhou;
 	}
+	
+	public String toString() {
+		return "FixtureData [fixtureId=" + fixtureId + ", data=" + data + ", timeDeCasaNome=" + timeDeCasaNome
+				+ ", timeDeCasaLogo=" + timeDeCasaLogo + ", timeDeForaNome=" + timeDeForaNome + ", timeDeForaLogo="
+				+ timeDeForaLogo + ", status=" + status + ", casaGanhou=" + casaGanhou + ", foraGanhou=" + foraGanhou
+				+ "]";
+	}
 }
 
