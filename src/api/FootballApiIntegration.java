@@ -23,7 +23,7 @@ public class FootballApiIntegration {
 		FootballApiService apiService = new FootballApiService(apiKey, apiHost);
 		PartidaService partidaService = new PartidaService();
 
-		List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-24", "America/Bahia", "3");
+		List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-26", "America/Bahia", "3");
 
 
 for (Partida partida : partidas) {

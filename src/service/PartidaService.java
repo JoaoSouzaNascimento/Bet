@@ -54,8 +54,10 @@ public class PartidaService {
 								float timeDeForaGanhaOdd = Float.parseFloat(bet.getValues().get(2).getOdd());
 								float empateOdd = Float.parseFloat(bet.getValues().get(1).getOdd());
 
-							
-								ResultadoPartida resultado = casaGanhou ? ResultadoPartida.HOME_WIN
+								ResultadoPartida resultado = null; 
+								
+								if(status.equals( "Match Finished")) 
+									resultado = casaGanhou ? ResultadoPartida.HOME_WIN
 										: foraGanhou ? ResultadoPartida.AWAY_WIN : ResultadoPartida.DRAW;
 
 								Partida partida = new Partida(fixtureId, timeDeCasaNome, timeDeCasaLogo, timeDeForaNome,
