@@ -4,24 +4,24 @@ import java.util.UUID;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import dao.UsuarioDao;
 import dao.UsuarioDaoPostgreSQL;
+import exceptions.CadastroException;
 import exceptions.ConsultaException;
 import exceptions.InsercaoException;
 import exceptions.LoginException;
+import model.CargoUsuario;
 import model.Usuario;
 
 public class AuthService {
-	private UsuarioDaoPostgreSQL usuarioDao;
+	private UsuarioDao usuarioDao;
 	
-	public AuthService() {
-		this.usuarioDao = new UsuarioDaoPostgreSQL();
+	public AuthService(UsuarioDao usuarioDao) {
+		  this.usuarioDao = usuarioDao;
 	}
 	
 	public Usuario login(String email, String password) throws LoginException, ConsultaException {
-		UsuarioDaoPostgreSQL usuarioDao = new UsuarioDaoPostgreSQL();
-		
-		
-		Usuario usuario = null;
+        Usuario usuario = null;
 		
 		try {
 			usuario = usuarioDao.getUsuarioByEmail(email);
@@ -36,36 +36,41 @@ public class AuthService {
 		return usuario;
 	}
 	
-	public Usuario cadastro(String username, String nickname, String email, String password) throws LoginException {
-	    UsuarioDaoPostgreSQL usuarioDao = new UsuarioDaoPostgreSQL();
+	public Usuario cadastro(String username, String nickname, String email, String password, CargoUsuario role) throws CadastroException {
 	    
-	    // valida
-	    if (username == null || username.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
-	        throw new IllegalArgumentException("Nome de usuário, email e senha são obrigatórios.");
+		if (username == null || username.isEmpty() || nickname == null || nickname.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
+	        throw new CadastroException("Todos os campos são obrigatórios");
+	    }
+
+	    if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+	        throw new CadastroException("Email inválido");
+	    }
+
+	    if (!username.matches("[A-Za-zÀ-ÖØ-öø-ÿ ']*")) {
+	        throw new CadastroException("Nome de usuário inválido");
 	    }
 	    
-	    // gera uuid
-	    UUID id = UUID.randomUUID();
+	    if (nickname.length() > 16) {
+	        throw new CadastroException("Apelido deve ter no máximo 16 caracteres");
+	    }
+
 	    
-	    // hash da senha com bcrypt
-	    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-	    
-	    // cria objeto usuario
-	    Usuario usuario = new Usuario(
-	        id, 
-	        username, 
-	        nickname, 
-	        hashedPassword, 
-	        email
-	    );
-	    
-	    // tenta criar usuario no banco
+	    try {
+	        Usuario existingUser = usuarioDao.getUsuarioByEmail(email);
+	        if (existingUser != null) {
+	            throw new CadastroException("Email já está em uso");
+	        }
+	    } catch (ConsultaException e) {
+	        throw new CadastroException("Erro ao verificar a existência do usuário: " + e.getMessage());
+	    }
+		
+		Usuario usuario = new Usuario(UUID.randomUUID(), username, nickname, BCrypt.hashpw(password, BCrypt.gensalt()), email, 0.0, false, role);
 	    try {
 	        usuarioDao.createUsuario(usuario);
-	    } catch (InsercaoException e) {
-	        e.printStackTrace();
-	        throw new LoginException("Erro ao criar o usuário: " + e.getMessage());
-	    }
+		} catch (InsercaoException e) {
+			throw new CadastroException("Erro ao criar o usuário: " + e.getMessage());
+		}
+	    
 	    return usuario;
 	}
 	

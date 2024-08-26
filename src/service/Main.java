@@ -1,49 +1,38 @@
-//package service;
-//
-//import dao.UsuarioDaoPostgreSQL;
-//import exceptions.AtualizacaoException;
-//import exceptions.ConsultaException;
-//import exceptions.DelecaoException;
-//import exceptions.InsercaoException;
-//import model.Usuario;
-//
-//public class Main {
-//
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//	
-//		
-//		UsuarioDaoPostgreSQL usuarioDao = new UsuarioDaoPostgreSQL();
-//		
-//		Usuario usuario = new Usuario("3cee0470-ad72-427d-86b6-91acebd2a7bc", "nomelegal", "nomelegal", "senhasupercriptografada", "email@foda.com", 2.50, false);
-//		
-////		try {
-////			System.out.print(usuarioDao.createUsuario(usuario).toString());
-////		} catch (InsercaoException e) {
-////			e.printStackTrace();
-////		}
-//		
-//		
-////		try {
-////			System.out.print(usuarioDao.updateUsuario(usuario).toString());
-////		} catch (AtualizacaoException e) {
-////			// TODO Auto-generated catch block
-////			e.printStackTrace();
-////		}
-//		
-//		try {
-//			usuarioDao.getAllUsuarios().forEach(user -> System.out.println(user.toString()));
-//		} catch (ConsultaException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		try {
-//			usuarioDao.deleteUsuario("3cee0470-ad72-427d-86b6-91acebd2a7bc");
-//		} catch (DelecaoException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-//
-//}
+package service;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+
+import dao.ApostaDao;
+import dao.ApostaDaoPostgreSQL;
+import dao.PalpiteDao;
+import dao.PalpiteDaoPostgreSQL;
+import model.Aposta;
+
+public class Main {
+    public static void main(String[] args) {
+        // Inicialize as dependências necessárias
+        ApostaDao apostaDao = new ApostaDaoPostgreSQL(); // Substitua pela implementação real
+        PalpiteDao palpiteDao = new PalpiteDaoPostgreSQL(); // Substitua pela implementação real
+        FootballApiService footballApiService = new FootballApiService("c3228facec7d0ee8fe14fc3b6d71742d", "v3.football.api-sports.io"); // Substitua pelos valores reais
+        PartidaService partidaService = new PartidaService(); // Substitua pela implementação real
+
+        // Inicialize o ApostaService
+        ApostaService apostaService = new ApostaService(apostaDao, palpiteDao, footballApiService, partidaService);
+
+        // Crie uma aposta para teste
+        Aposta aposta = new Aposta(1, 0, null, false, LocalDate.of(2024, 8, 25)); // Substitua pela implementação real
+        // Configure a aposta conforme necessário
+
+        // Defina os valores de liga e fuso horário
+        String league = "71"; // Substitua pelo valor real
+        String timezone = "America/Bahia"; // Substitua pelo valor real
+
+        // Chame o método validarApostaGanha
+        try {
+            apostaService.validarApostaGanha(aposta, league, timezone);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

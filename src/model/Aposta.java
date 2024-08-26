@@ -1,36 +1,34 @@
 package model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Aposta {
 
 	private int id;
-	private BigDecimal amount;
+	private float amount;
 	private List<Palpite> palpites;
-	private boolean status;
+	private Boolean status;
+	private LocalDate date;
 	
-	public Aposta(int id, BigDecimal amount, List<Palpite> palpites, boolean status) {
+	public Aposta(int id, float amount, List<Palpite> palpites, boolean status, LocalDate date) {
 		super();
 		this.id = id;
 		this.amount = amount;
 		this.palpites = palpites;
 		this.status = status;
+		this.date = date;
 	}
 	
-	public Aposta(BigDecimal amount, List<Palpite> palpites, boolean status) {
+	public Aposta(float amount, List<Palpite> palpites, String timeZone) {
 		super();
 		this.amount = amount;
 		this.palpites = palpites;
-		this.status = status;
-	}
-	
-	public Aposta(BigDecimal amount, boolean status) {
-		super();
-		this.amount = amount;
-		this.palpites = new ArrayList<>();
-		this.status = status;
+		this.status = null;
+		this.date = LocalDate.now(ZoneId.of(timeZone));
 	}
 	
 	public int getId() {
@@ -39,10 +37,10 @@ public class Aposta {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public BigDecimal getAmount() {
+	public float getAmount() {
 		return amount;
 	}
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public List<Palpite> getPalpites() {
@@ -58,6 +56,10 @@ public class Aposta {
 		this.status = status;
 	}
 
+	public LocalDate getDate() {
+		return date;
+	}
+	
 	public boolean addPalpite(Palpite palpite) {
 		return this.palpites.add(palpite);
 	}
@@ -65,5 +67,6 @@ public class Aposta {
 	public boolean removePalpiteById(int palpiteId) {
 		return this.palpites.removeIf(palpite -> palpite.getPartidaId() == palpiteId);		
 	}
+	
 	
 }
