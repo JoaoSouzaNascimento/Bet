@@ -94,6 +94,7 @@ public class PartidaService {
 		}
 		return partidas;
 	}
+}
 
 
 	public FixtureData getFixtureDataById(String fixtureId) throws Exception {
@@ -152,4 +153,3 @@ public class PartidaService {
 //		return partidas;
 //	}
 
-}

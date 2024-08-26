@@ -1,6 +1,7 @@
 package service;
 
 import java.util.List;
+import java.util.UUID;
 
 import dao.UsuarioDaoPostgreSQL;
 import exceptions.AtualizacaoException;
@@ -36,18 +37,19 @@ public class UsuarioService {
 	}
 
 	
-	public void editarUsuarioNome(Usuario usuario, String username) {
-		//TODO Adicionar validações
-		
-		usuario.setUsername(username);
-		
-		try {
-			usuarioDao.updateUsuario(usuario);
-		} catch (AtualizacaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void editarUsuarioNome(String email, String username) throws ConsultaException, AtualizacaoException {
+	    // TODO: Adicionar validações
+		System.out.println("Editando usuário com ID: " + email);
+	    Usuario usuario = usuarioDao.getUsuarioByEmail(email); // Pode lançar ConsultaException
+	    if (usuario != null) {
+	        usuario.setUsername(username);
+	        usuarioDao.updateUsuario(usuario); // Atualiza o usuário no banco
+	    } else {
+	        throw new AtualizacaoException("Usuário não encontrado.");
+	    }
 	}
+
+
 	
 	public void editarUsuarioApelido(Usuario usuario, String apelido) {
 		//TODO Adicionar validações
@@ -132,5 +134,17 @@ public class UsuarioService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public void editarUsuarioEmail(UUID usuarioId, String email) throws ConsultaException, AtualizacaoException {
+	    // TODO: Adicionar validações para o e-mail
+	    System.out.println("Editando e-mail do usuário com ID: " + usuarioId);
+	    Usuario usuario = usuarioDao.getUsuarioById(usuarioId); // Pode lançar ConsultaException
+	    if (usuario != null) {
+	        usuario.setEmail(email);
+	        usuarioDao.updateUsuario(usuario); // Atualiza o usuário no banco
+	    } else {
+	        throw new AtualizacaoException("Usuário não encontrado.");
+	    }
 	}
 }
