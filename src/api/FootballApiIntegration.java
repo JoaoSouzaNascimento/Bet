@@ -23,23 +23,30 @@ public class FootballApiIntegration {
 		FootballApiService apiService = new FootballApiService(apiKey, apiHost);
 		PartidaService partidaService = new PartidaService();
 
-		List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-26", "America/Bahia", "3");
-
-
-for (Partida partida : partidas) {
-    System.out.println("Fixture ID: " + partida.getId());
-    System.out.println("Time de Casa Nome: " + partida.getTeamHome());
-    System.out.println("Time de Casa Logo: " + partida.getTeamHomeLogo());
-    System.out.println("Time de Fora Nome: " + partida.getTeamAway());
-    System.out.println("Time de Fora Logo: " + partida.getTeamAwayLogo());
-    System.out.println("Data: " + partida.getData());
-    System.out.println("Status: " + partida.getStatus());
-    System.out.println("Resultado: " + partida.getResultado());
-    System.out.println("ResultadoHome: " + partida.getHomeWinOdd());
-    System.out.println("ResultadoAway: " + partida.getAwayWinOdd());
-    System.out.println("ResultadoDraw: " + partida.getDrawOdd());
-    System.out.println("-----------------------------------------");
-}
+		try {
+			System.out.println(partidaService.getFixtureDataById("1180587").toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-26", "America/Bahia", "3");
+//
+//
+//for (Partida partida : partidas) {
+//    System.out.println("Fixture ID: " + partida.getId());
+//    System.out.println("Time de Casa Nome: " + partida.getTeamHome());
+//    System.out.println("Time de Casa Logo: " + partida.getTeamHomeLogo());
+//    System.out.println("Time de Fora Nome: " + partida.getTeamAway());
+//    System.out.println("Time de Fora Logo: " + partida.getTeamAwayLogo());
+//    System.out.println("Data: " + partida.getData());
+//    System.out.println("Status: " + partida.getStatus());
+//    System.out.println("Resultado: " + partida.getResultado());
+//    System.out.println("ResultadoHome: " + partida.getHomeWinOdd());
+//    System.out.println("ResultadoAway: " + partida.getAwayWinOdd());
+//    System.out.println("ResultadoDraw: " + partida.getDrawOdd());
+//    System.out.println("-----------------------------------------");
+//}
 
 		
 //        try {

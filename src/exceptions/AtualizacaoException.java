@@ -1,6 +1,8 @@
 package exceptions;
 
-public class AtualizacaoException extends Exception {
+import java.sql.SQLException;
+
+public class AtualizacaoException extends SQLException {
     public AtualizacaoException(String message) {
         super(message);
     }

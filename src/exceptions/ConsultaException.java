@@ -1,6 +1,8 @@
 package exceptions;
 
-public class ConsultaException extends Exception {
+import java.sql.SQLException;
+
+public class ConsultaException extends SQLException {
     public ConsultaException(String message) {
         super(message);
     }

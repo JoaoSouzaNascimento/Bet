@@ -4,16 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import api.dto.FixtureResponse;
 import dao.ApostaDao;
-import dao.ApostaDaoPostgreSQL;
 import dao.PalpiteDao;
-import dao.PalpiteDaoPostgreSQL;
 import exceptions.AtualizacaoException;
 import exceptions.ConsultaException;
 import exceptions.DelecaoException;
-import exceptions.InsercaoException;
 import model.Aposta;
 import model.Palpite;
 import model.ResultadoPartida;
@@ -34,85 +32,25 @@ public class ApostaService {
 		this.partidaService = partidaService;
 	}
 
-	public void validarApostaGanha(Aposta aposta, String league, String timezone) throws Exception {
+	public boolean validarAposta(Aposta aposta, String league, String timezone) throws Exception {
 		try {
-			if (aposta.getPalpites() == null) {
-				aposta.setPalpites(palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId()));
-			}
+			List<Palpite> palpites = palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId());
 
 			List<FixtureResponse> fixtures = footballApiService.getFixtures(league,
 					String.valueOf(aposta.getDate().getYear()), aposta.getDate().toString(), timezone);
 			List<FixtureData> fixtureDataList = getFinishedFixtures(fixtures);
 
-			boolean apostaGanha = isApostaGanha(aposta, fixtureDataList);
+			boolean apostaGanha = isApostaGanha(palpites, fixtureDataList);
 
 			aposta.setStatus(apostaGanha);
 			apostaDao.updateAposta(aposta);
+			return apostaGanha;
 		} catch (ConsultaException | AtualizacaoException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
-//	public void validarApostaGanha(Aposta aposta, String league, String timezone) throws Exception {
-//		try {
-//			if (aposta.getPalpites() == null) {
-//				aposta.setPalpites(palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId()));
-//			}
-//
-//			List<FixtureResponse> fixtures = footballApiService.getFixtures(league,
-//					String.valueOf(aposta.getDate().getYear()), aposta.getDate().toString(), timezone);
-//			List<FixtureData> fixtureDataList = new ArrayList<>();
-//
-//			for (FixtureResponse fixture : fixtures) {
-//				FixtureData fixtureData = partidaService.getFixtureData(fixture);
-//				if (fixtureData.getStatus().equals("Match Finished")) {
-//					fixtureDataList.add(fixtureData);
-//				} else {
-//					throw new RuntimeException("Ainda existem partidas não finalizadas");
-//				}
-//			}
-//
-//			boolean apostaGanha = true;
-//
-//			for (Palpite palpite : aposta.getPalpites()) {
-//
-//				Optional<FixtureData> optionalFixtureData = fixtureDataList.stream()
-//						.filter(fixtureData -> fixtureData.getFixtureId().equals(palpite.getPartidaId())).findFirst();
-//
-//				if (optionalFixtureData.isPresent()) {
-//					FixtureData fixtureData = optionalFixtureData.get();
-//					if (palpite.getResultado().equals(ResultadoPartida.HOME_WIN) && !fixtureData.isCasaGanhou()
-//							|| palpite.getResultado().equals(ResultadoPartida.AWAY_WIN) && !fixtureData.isForaGanhou()
-//							|| palpite.getResultado().equals(ResultadoPartida.DRAW) && !fixtureData.isCasaGanhou()
-//									&& !fixtureData.isForaGanhou()) {
-//						apostaGanha = false;
-//						break;
-//					}
-//				}
-//			}
-//			aposta.setStatus(apostaGanha);
-//			apostaDao.updateAposta(aposta);
-//		} catch (ConsultaException |
-//
-//				AtualizacaoException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-	// Criar nova aposta e persistir no banco de dados
-//    public Aposta criarAposta(Usuario usuario, float valorApostado, List<Palpite> palpites) {
-//        Aposta aposta = null;
-//    	try {
-//            aposta = apostaDao.createAposta(usuario.getId(), new Aposta(valorApostado, null));
-//            //TODO implementar
-//            //aposta.setPalpites(palpiteDao.createListaDePalpites(aposta.getId(), palpites));
-//            aposta.setPalpites(palpites);
-//        } catch (InsercaoException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-	// Recupera uma aposta específica pelo ID
 	public Aposta getApostaById(int apostaId) {
 		try {
 			return apostaDao.getApostaById(apostaId);
@@ -122,7 +60,6 @@ public class ApostaService {
 		}
 	}
 
-	// Recupera todas as apostas de um usuário
 	public List<Aposta> getTodasApostas(Usuario usuario) {
 		try {
 			return apostaDao.getTodasApostasPorUsuarioId(usuario.getId());
@@ -132,18 +69,29 @@ public class ApostaService {
 		}
 	}
 
-	// Atualiza o valor apostado
-	public void atualizarValorApostado(Aposta aposta, float novoValorApostado) {
-		aposta.setAmount(novoValorApostado);
+//	public void atualizarValorApostado(Aposta aposta, BigDecimal novoValorApostado) {
+//		
+//		isApostaAberta(aposta);
+//		aposta.setAmount(novoValorApostado);
+//		try {
+//			apostaDao.updateAposta(aposta);
+//		} catch (AtualizacaoException e) {
+//			e.printStackTrace();
+//		}
+//	}
+
+	public void criarAposta(UUID usuarioId, Aposta aposta, List<Palpite> palpites) {
 		try {
-			apostaDao.updateAposta(aposta);
-		} catch (AtualizacaoException e) {
+			apostaDao.createAposta(aposta);
+			palpiteDao.createListaDePalpites(palpites);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Exclui uma aposta específica
-	public void excluirAposta(Aposta aposta) {
+	public void excluirAposta(Aposta aposta) throws Exception {
+		isApostaAberta(aposta);
+
 		try {
 			apostaDao.deleteAposta(aposta.getId());
 		} catch (DelecaoException e) {
@@ -151,33 +99,14 @@ public class ApostaService {
 		}
 	}
 
-	// Adiciona um novo palpite à aposta e persiste no banco de dados
-	public void addPalpite(Aposta aposta, Palpite palpite) {
+	public List<Palpite> getPalpitesDeUmaAposta(Aposta aposta) {
 		try {
-			palpiteDao.createPalpite(aposta.getId(), palpite);
-			aposta.addPalpite(palpite);
-		} catch (InsercaoException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void getPalpitesDeUmaAposta(Aposta aposta) {
-		try {
-			aposta.setPalpites(palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId()));
-
+			return palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId());
 		} catch (ConsultaException e) {
 			e.printStackTrace();
 		}
-	}
 
-	// Exclui um palpite específico da aposta
-	public void excluirPalpite(Aposta aposta, int palpiteId) {
-		try {
-			palpiteDao.deletePalpite(palpiteId);
-			aposta.removePalpiteById(palpiteId);
-		} catch (DelecaoException e) {
-			e.printStackTrace();
-		}
+		return null;
 	}
 
 	private List<FixtureData> getFinishedFixtures(List<FixtureResponse> fixtures) throws Exception {
@@ -195,10 +124,11 @@ public class ApostaService {
 		return fixtureDataList;
 	}
 
-	private boolean isApostaGanha(Aposta aposta, List<FixtureData> fixtureDataList) {
-		for (Palpite palpite : aposta.getPalpites()) {
+	private boolean isApostaGanha(List<Palpite> palpites, List<FixtureData> fixtureDataList) {
+		for (Palpite palpite : palpites) {
 			Optional<FixtureData> optionalFixtureData = fixtureDataList.stream()
-					.filter(fixtureData -> fixtureData.getFixtureId().equals(palpite.getPartidaId())).findFirst();
+					.filter(fixtureData -> fixtureData.getFixtureId().equals(String.valueOf(palpite.getPartidaId())))
+					.findFirst();
 
 			if (optionalFixtureData.isPresent()) {
 				FixtureData fixtureData = optionalFixtureData.get();
@@ -212,6 +142,18 @@ public class ApostaService {
 		}
 
 		return true;
+	}
+
+	private boolean isApostaAberta(Aposta aposta) throws Exception {
+		List<Palpite> palpites = getPalpitesDeUmaAposta(aposta);
+		boolean isApostaAberta = true;
+		for (Palpite palpite : palpites) {
+			FixtureData fixtureData = partidaService.getFixtureDataById(String.valueOf(palpite.getPartidaId()));
+			if (!fixtureData.getStatus().equals("Not Started")) {
+				return isApostaAberta = false;
+			}
+		}
+		return isApostaAberta;
 	}
 
 }

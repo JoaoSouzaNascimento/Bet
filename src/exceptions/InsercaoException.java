@@ -1,6 +1,8 @@
 package exceptions;
 
-public class InsercaoException extends Exception {
+import java.sql.SQLException;
+
+public class InsercaoException extends SQLException {
     public InsercaoException(String message) {
         super(message);
     }
