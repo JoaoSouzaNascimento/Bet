@@ -3,6 +3,8 @@ package ui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +12,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import model.Partida;
 import model.Usuario;
@@ -42,6 +48,7 @@ public class JanelaPrincipal extends JFrame {
     private JPanel panelApostasPendentes;
     private JButton btnPerfil;  // Botão de perfil do usuário
     private JButton btnRefresh;
+    private JButton btnLogout;
     private JPanel panelListaPalpites; // Novo painel para lista de palpites
     
     private static class PartidaSelecionada {
@@ -95,15 +102,18 @@ public class JanelaPrincipal extends JFrame {
         panelSuperior.setBackground(new Color(34, 49, 63));
         getContentPane().add(panelSuperior, BorderLayout.NORTH);
 
-        btnPerfil = new JButton("Perfil");
-        btnPerfil.setPreferredSize(new Dimension(100, 30));
+        btnPerfil = padronizarBotao("Perfil");
         btnPerfil.addActionListener(e -> abrirUsuarioPanel());
         panelSuperior.add(btnPerfil);
 
-        btnRefresh = new JButton("Refresh");
-        btnRefresh.setPreferredSize(new Dimension(100, 30));
+        btnRefresh = padronizarBotao("Refresh");
         btnRefresh.addActionListener(e -> carregarPartidas());
         panelSuperior.add(btnRefresh);
+        
+        btnLogout = padronizarBotao("Logout");
+        btnLogout.addActionListener(e -> logout());
+        panelSuperior.add(btnLogout);
+        
 
         JLabel lblTitle = new JLabel("Casa de Apostas", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
@@ -131,26 +141,56 @@ public class JanelaPrincipal extends JFrame {
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         getContentPane().add(new JScrollPane(panelCentral), BorderLayout.CENTER);
 
+        // Panel Carrinho (principal)
         panelCarrinho = new JPanel(new BorderLayout());
-        panelCarrinho.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panelCarrinho.setBackground(new Color(34, 49, 63));
+        panelCarrinho.setBorder(new EmptyBorder(10, 10, 10, 10));  // Margens internas
+        panelCarrinho.setBackground(new Color(34, 49, 63));  // Fundo escuro similar aos botões
         getContentPane().add(panelCarrinho, BorderLayout.SOUTH);
 
+        // Panel Carrinho (esquerda)
         JPanel panelCarrinhoLeft = new JPanel(new BorderLayout());
-        panelCarrinhoLeft.setOpaque(false);
+        panelCarrinhoLeft.setOpaque(false);  // Torna o painel transparente para manter o fundo do panelCarrinho
         panelCarrinho.add(panelCarrinhoLeft, BorderLayout.WEST);
 
+        // Label de Informações do Carrinho
         lblCarrinhoInfo = new JLabel("Carrinho de Apostas: 0 odds selecionadas");
-        lblCarrinhoInfo.setFont(new Font("Arial", Font.PLAIN, 16));
-        lblCarrinhoInfo.setForeground(Color.WHITE);
+        lblCarrinhoInfo.setFont(new Font("Arial", Font.BOLD, 16));  // Mantém a consistência com os botões
+        lblCarrinhoInfo.setForeground(Color.WHITE);  // Cor de texto branco para maior contraste
         panelCarrinhoLeft.add(lblCarrinhoInfo, BorderLayout.NORTH);
 
+        // Panel de Lista de Palpites (parte central)
         panelListaPalpites = new JPanel();
         panelListaPalpites.setLayout(new BoxLayout(panelListaPalpites, BoxLayout.Y_AXIS));
-        panelListaPalpites.setBorder(BorderFactory.createTitledBorder("Palpites Selecionados"));
-        panelListaPalpites.setBackground(new Color(34, 49, 63));
-        panelListaPalpites.setForeground(Color.WHITE);
-        panelCarrinhoLeft.add(new JScrollPane(panelListaPalpites), BorderLayout.CENTER);
+        panelListaPalpites.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.WHITE, 1), 
+            "Palpites Selecionados", 
+            TitledBorder.DEFAULT_JUSTIFICATION, 
+            TitledBorder.DEFAULT_POSITION, 
+            new Font("Arial", Font.BOLD, 14), 
+            Color.WHITE  // Título em branco
+        ));  // Borda com título branco
+        
+        
+        panelListaPalpites.revalidate();
+        panelListaPalpites.repaint();
+        // Define o tamanho mínimo e preferido para o painel de palpites
+        panelListaPalpites.setPreferredSize(new Dimension(300, 200)); // Ajuste a largura e altura conforme necessário
+        panelListaPalpites.setMinimumSize(new Dimension(300, 100)); // Define o tamanho mínimo
+
+        // Adiciona o painel de palpites ao JScrollPane
+        JScrollPane scrollPanePalpites = new JScrollPane(panelListaPalpites);
+        scrollPanePalpites.setBorder(BorderFactory.createLineBorder(Color.WHITE));  // Borda branca ao redor do scroll
+        scrollPanePalpites.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); // Sempre mostra a barra de rolagem vertical
+        scrollPanePalpites.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Não mostra a barra de rolagem horizontal
+        scrollPanePalpites.getViewport().setBackground(new Color(34, 49, 63));  // Fundo do viewport do scroll
+
+        // Adiciona o JScrollPane ao painel carrinho esquerdo
+        panelCarrinhoLeft.add(scrollPanePalpites, BorderLayout.CENTER);
+        
+        panelCarrinhoLeft.revalidate();
+        panelCarrinhoLeft.repaint();
+        panelListaPalpites.setBackground(new Color(34, 49, 63));  // Fundo igual ao panelCarrinho
+        panelListaPalpites.setForeground(Color.WHITE);  // Cor de texto branco
 
         lblMultiplicacaoOdds = new JLabel("Multiplicação de Odds: 1.0");
         lblMultiplicacaoOdds.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -166,11 +206,10 @@ public class JanelaPrincipal extends JFrame {
         panelAposta.add(lblValorAposta);
 
         txtValorAposta = new JTextField();
-        txtValorAposta.setPreferredSize(new Dimension(100, 30));
+        txtValorAposta.setPreferredSize(new Dimension(200, 40));
         panelAposta.add(txtValorAposta);
 
-        btnConfirmarAposta = new JButton("Possível retorno: 0.00");
-        btnConfirmarAposta.setPreferredSize(new Dimension(200, 40));
+        btnConfirmarAposta = padronizarBotao("Possível retorno: 0.00");
         panelAposta.add(btnConfirmarAposta);
 
         txtValorAposta.addActionListener(e -> atualizarValorRetorno());
@@ -196,7 +235,32 @@ public class JanelaPrincipal extends JFrame {
     
     private void carregarPartidas() {
         panelCentral.removeAll();
-        List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-25", "America/Bahia", "3");
+     // TODO retirar a implementação abaixo:
+        List<Partida> partidas = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < 10; i++) {
+                String id = String.valueOf(i);
+                String teamHome = "TeamHome" + i;
+                URL teamHomeLogo = new URL("http://example.com/logo" + i);
+                String teamAway = "TeamAway" + i;
+                URL teamAwayLogo = new URL("http://example.com/logo" + i);
+                OffsetDateTime data = OffsetDateTime.now(ZoneOffset.UTC);
+                String status = "Status" + i;
+                ResultadoPartida resultado = ResultadoPartida.HOME_WIN; // or any other value
+                float homeWinOdd = 1.0f + i;
+                float awayWinOdd = 2.0f + i;
+                float drawOdd = 3.0f + i;
+
+                Partida partida = new Partida(id, teamHome, teamHomeLogo, teamAway, teamAwayLogo, data, status, resultado, homeWinOdd, awayWinOdd, drawOdd);
+                partidas.add(partida);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        // TODO retirar a implementação acima e descomentar a função abaixo
+
+        //List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-25", "America/Bahia", "3");
 
         for (Partida partida : partidas) {
             // Painel principal para cada partida
@@ -256,17 +320,23 @@ public class JanelaPrincipal extends JFrame {
         panelCentral.revalidate();
         panelCentral.repaint();
     }
+    
+    public JButton padronizarBotao(String texto) {
+        JButton botao = new JButton(texto);
+        botao.setBackground(new Color(41, 128, 185));  // Cor de fundo
+        botao.setForeground(Color.WHITE);  // Cor do texto
+        botao.setFocusPainted(false);  // Remover borda de foco
+        botao.setBorderPainted(false);  // Remover borda
+        botao.setPreferredSize(new Dimension(200, 40));  // Tamanho do botão 
+        botao.setFont(new Font("Arial", Font.BOLD, 16));  // Fonte e estilo
+        return botao;
+    }
 
 
     private JButton createOddButton(double oddValue, Partida partida, String tipo, ResultadoPartida resultado) {
-        JButton btnOdd = new JButton(String.valueOf(oddValue));
-        btnOdd.setBackground(new Color(41, 128, 185));
-        btnOdd.setForeground(Color.WHITE);
-        btnOdd.setFocusPainted(false);
-        btnOdd.setBorderPainted(false);
-        btnOdd.setPreferredSize(new Dimension(100, 50));
-        btnOdd.setFont(new Font("Arial", Font.BOLD, 16));
+        JButton btnOdd = padronizarBotao(String.valueOf(oddValue));
 
+        btnOdd.setPreferredSize(new Dimension(100, 50));
         btnOdd.addActionListener(e -> {
             if (partidaJaNoCarrinho(partida)) {
                 JOptionPane.showMessageDialog(JanelaPrincipal.this, 
@@ -460,6 +530,30 @@ public class JanelaPrincipal extends JFrame {
         }
     }
 
+    private void logout() {
+        // Limpar dados do usuário
+        usuarioLogado = null;
+        updateUIForLoggedUser();
+        
+        // Fechar a Janela Principal
+        this.dispose();
+        
+        // Abrir o LoginPanel
+        SwingUtilities.invokeLater(() -> {
+            // Cria um novo JFrame para o LoginPanel
+            JFrame loginFrame = new JFrame("Login");
+            loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            loginFrame.setSize(450, 300);
+            loginFrame.setLocationRelativeTo(null); // Centraliza a janela na tela
+            
+            // Instancia o LoginPanel com o novo JFrame como argumento
+            LoginPanel loginPanel = new LoginPanel(loginFrame);
+            loginFrame.setContentPane(loginPanel);
+            
+            // Torna a janela visível
+            loginFrame.setVisible(true);
+        });
+    }
 
 
     private void updateUIForLoggedUser() {

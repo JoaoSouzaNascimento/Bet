@@ -2,10 +2,7 @@ package ui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import service.AuthService;
 import model.Usuario;
 import model.CargoUsuario;
@@ -50,7 +47,6 @@ public class CadastroPanel extends JPanel {
         JLabel lblPasswordConfirm = createStyledLabel("Confirm Password:");
         passwordSalvar = createStyledPasswordField();
 
-        // Adiciona componentes no painel
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(lblName, gbc);
@@ -89,15 +85,33 @@ public class CadastroPanel extends JPanel {
         JButton btnAddCadastro = createStyledButton("Add");
         btnAddCadastro.addActionListener(e -> {
             try {
-                authService.cadastro(
+                // Verificar se as senhas correspondem
+                if (!new String(passwordTeste.getPassword()).equals(new String(passwordSalvar.getPassword()))) {
+                    JOptionPane.showMessageDialog(CadastroPanel.this, "As senhas não coincidem.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Realizar o cadastro
+                Usuario usuario = authService.cadastro(
                         txtName.getText(),
                         txtUserName.getText(),
                         txtEmail.getText(),
                         new String(passwordTeste.getPassword()),
                         CargoUsuario.USUARIO
                 );
+
                 JOptionPane.showMessageDialog(CadastroPanel.this, "Cadastro realizado com sucesso!");
-                parentFrame.dispose(); // Fechar o frame após o cadastro
+
+                // Fechar o frame de cadastro
+                parentFrame.dispose();
+
+                // Abrir a Janela Principal com o usuário cadastrado
+                SwingUtilities.invokeLater(() -> {
+                    JanelaPrincipal mainFrame = new JanelaPrincipal();
+                    mainFrame.setUsuario(usuario);
+                    mainFrame.setVisible(true);
+                });
+
             } catch (CadastroException ex) {
                 JOptionPane.showMessageDialog(CadastroPanel.this, "Erro no cadastro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -128,14 +142,14 @@ public class CadastroPanel extends JPanel {
     private JTextField createStyledTextField() {
         JTextField textField = new JTextField();
         textField.setFont(new Font("Arial", Font.PLAIN, 16));
-        textField.setPreferredSize(new Dimension(200, 30));  // Define limite de tamanho
+        textField.setPreferredSize(new Dimension(200, 30));
         return textField;
     }
 
     private JPasswordField createStyledPasswordField() {
         JPasswordField passwordField = new JPasswordField();
         passwordField.setFont(new Font("Arial", Font.PLAIN, 16));
-        passwordField.setPreferredSize(new Dimension(200, 30));  // Define limite de tamanho
+        passwordField.setPreferredSize(new Dimension(200, 30));
         return passwordField;
     }
 
