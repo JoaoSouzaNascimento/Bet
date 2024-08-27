@@ -32,6 +32,7 @@ public class UsuarioPanel extends JFrame {
 	
 	public UsuarioPanel(JanelaPrincipal janelaPrincipal) {  // Recebe a referência ao JanelaPrincipal
         this.usuarioService = AppContext.getUsuarioService();
+        
         this.transactionService = AppContext.getTransactionService();
         this.apostaService = AppContext.getApostaService();
         this.janelaPrincipal = janelaPrincipal;  // Armazena a referência
