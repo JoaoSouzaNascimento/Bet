@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Palpite {
 	
-	private int apostaId;
+	private Integer apostaId;
 	private int partidaId;
 	private ResultadoPartida resultado;
 	private BigDecimal odd;

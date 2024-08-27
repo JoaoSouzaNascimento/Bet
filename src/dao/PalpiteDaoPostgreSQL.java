@@ -16,11 +16,11 @@ import model.ResultadoPartida;
 
 public class PalpiteDaoPostgreSQL implements PalpiteDao {
 
-	private static final String INSERT_PALPITE = "INSERT INTO BETS_MATCHES (BET_ID, MATCH_ID, SHOT, ODD) VALUES (?, ?, ?, ?)";
-	private static final String UPDATE_PALPITE = "UPDATE BETS_MATCHES SET SHOT = ? WHERE BET_ID = ? AND MATCH_ID = ?";
-	private static final String DELETE_PALPITE = "DELETE FROM BETS_MATCHES WHERE BET_ID = ? AND MATCH_ID = ?";
-	private static final String SELECT_PALPITE_BY_MATCH_ID = "SELECT BET_ID, MATCH_ID, SHOT, ODD FROM BETS_MATCHES WHERE BET_ID = ? AND MATCH_ID = ?";
-	private static final String SELECT_ALL_PALPITES = "SELECT BET_ID, MATCH_ID, SHOT, ODD FROM BETS_MATCHES WHERE BET_ID = ?";
+	private static final String INSERT_PALPITE = "INSERT INTO \"BETS_MATCHES\" (\"BET_ID\", \"MATCH_ID\", \"SHOT\", \"ODD\") VALUES (?, ?, ?, ?)";
+	private static final String UPDATE_PALPITE = "UPDATE \"BETS_MATCHES\" SET \"SHOT\" = ? WHERE \"BET_ID\" = ? AND \"MATCH_ID\" = ?";
+	private static final String DELETE_PALPITE = "DELETE FROM \"BETS_MATCHES\" WHERE \"BET_ID\" = ? AND \"MATCH_ID\" = ?";
+	private static final String SELECT_PALPITE_BY_MATCH_ID = "SELECT \"BET_ID\", \"MATCH_ID\", \"SHOT\", \"ODD\" FROM \"BETS_MATCHES\" WHERE BET_ID = ? AND MATCH_ID = ?";
+	private static final String SELECT_ALL_PALPITES = "SELECT \"BET_ID\", \"MATCH_ID\", \"SHOT\", \"ODD\" FROM \"BETS_MATCHES\" WHERE \"BET_ID\" = ?";
 
 	private Connection getConnection() throws SQLException {
 		return ConexaoBdSingleton.getInstance().getConexao();
@@ -133,22 +133,22 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
 
 	@Override
 	public List<Palpite> getTodosPalpitesDeUmaAposta(int apostaId) throws ConsultaException {
-		List<Palpite> palpites = new ArrayList<>();
-		try (Connection connection = getConnection();
-				PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES);
-				ResultSet rs = stmt.executeQuery()) {
+	  List<Palpite> palpites = new ArrayList<>();
+	  try (Connection connection = getConnection();
+	    PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES)) {
 
-			while (rs.next()) {
-				stmt.setInt(1, apostaId);
-				Palpite palpite = new Palpite(apostaId, rs.getInt("MATCH_ID"),
-						rs.getString("SHOT") == null ? null : ResultadoPartida.valueOf(rs.getString("SHOT")),
-						rs.getBigDecimal("ODD"));
-				palpites.add(palpite);
-			}
-		} catch (SQLException e) {
-			throw new ConsultaException("Erro ao consultar todos os palpites: " + e.getMessage(), e);
-		}
-		return palpites;
-	}
-
+	   stmt.setInt(1, apostaId);
+	   try (ResultSet rs = stmt.executeQuery()) {
+	    while (rs.next()) {
+	     Palpite palpite = new Palpite(apostaId, rs.getInt("MATCH_ID"),
+	       rs.getString("SHOT") == null ? null : ResultadoPartida.valueOf(rs.getString("SHOT")),
+	       rs.getBigDecimal("ODD"));
+	     palpites.add(palpite);
+	    }
+	   }
+	  } catch (SQLException e) {
+	   throw new ConsultaException("Erro ao consultar todos os palpites: " + e.getMessage(), e);
+	  }
+	  return palpites;
+	 }
 }

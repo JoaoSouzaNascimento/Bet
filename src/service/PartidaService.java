@@ -22,7 +22,7 @@ public class PartidaService {
 	private final FootballApiService footballService;
 
 	public PartidaService() {
-		this.footballService = new FootballApiService("c7ca4c65dc60d8ff5a537b1bb02a1465", "v3.football.api-sports.io");
+		this.footballService = new FootballApiService("0af6c4cae9850dba88765797e79d9413", "v3.football.api-sports.io");
 	}
 
 	public FixtureData getFixtureData(FixtureResponse fixture) throws MalformedURLException {
@@ -95,14 +95,15 @@ public class PartidaService {
 		return partidas;
 	}
 	
+
+
+
 	public FixtureData getFixtureDataById(String fixtureId) throws Exception {
 		FixtureResponse fixture = footballService.getFixtureById(fixtureId);
 		return getFixtureData(fixture);
 	}
 }
 
-
-	
 //	public List<Partida> BuscarPartidasPorDia(String league, String season, String date, String timezone,
 //			String bookmaker) {
 //		List<Partida> partidas = new ArrayList<>();

@@ -122,7 +122,9 @@ public class ApostaService {
 
 	public List<Palpite> getPalpitesDeUmaAposta(Aposta aposta) {
 		try {
+			System.out.println("ID da Aposta: " + aposta.getId());
 			return palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId());
+			
 		} catch (ConsultaException e) {
 			e.printStackTrace();
 		}
