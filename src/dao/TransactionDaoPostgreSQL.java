@@ -17,7 +17,7 @@ import model.Usuario;
 
 public class TransactionDaoPostgreSQL implements TransactionDao {
 
-	private static final String INSERT_TRANSACTION = "INSERT INTO \"TRANSACTIONS\" (\"USER_ID\", \"TYPE\", \"STATUS\", \"AMOUNT\") VALUES (?, ?, ?, ?)";
+	private static final String INSERT_TRANSACTION = "INSERT INTO \"TRANSACTIONS\" (\"USER_ID\", \"TYPE\", \"STATUS\", \"AMOUNT\") VALUES (?, ?, ?, ?)  RETURNING \"ID\"";
 
 	private static final String UPDATE_TRANSACTION = "UPDATE \"TRANSACTIONS\" SET \"USER_ID\" = ?, \"TYPE\" = ?, \"STATUS\" = ?, \"AMOUNT\" = ? WHERE \"ID\" = ?";
 
@@ -41,9 +41,9 @@ public class TransactionDaoPostgreSQL implements TransactionDao {
 			ps.setInt(3, transaction.getStatus());
 			ps.setBigDecimal(4, transaction.getAmount());
 
-			try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+			try (ResultSet generatedKeys = ps.executeQuery()) {
 				if (generatedKeys.next()) {
-					transaction.setId(generatedKeys.getInt(1));
+					transaction.setId(generatedKeys.getInt("ID"));
 				}
 			}
 		} catch (SQLException e) {
