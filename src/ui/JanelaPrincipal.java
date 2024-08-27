@@ -19,6 +19,7 @@ import service.PartidaService;
 import service.ApostaService;
 import service.FootballApiService;
 import dao.PalpiteDaoPostgreSQL;
+import dao.UsuarioDaoPostgreSQL;
 import dao.ApostaDaoPostgreSQL;
 import config.AppContext;
 
@@ -62,7 +63,7 @@ public class JanelaPrincipal extends JFrame {
         FootballApiService footballApiService = new FootballApiService(apiKey, apiHost);
         PartidaService partidaService = new PartidaService(); 
         
-        this.apostaService = new ApostaService(apostaDao, palpiteDao, footballApiService, partidaService);
+        this.apostaService = new ApostaService(apostaDao, palpiteDao, footballApiService, partidaService, new UsuarioDaoPostgreSQL());
         this.partidaService = new PartidaService();
         this.carrinhoApostas = new ArrayList<>();
         initialize();
@@ -326,7 +327,7 @@ public class JanelaPrincipal extends JFrame {
             }
 
             // Converta o saldo do usuário de double para BigDecimal
-            BigDecimal saldoUsuario = BigDecimal.valueOf(usuarioLogado.getBalance());
+            BigDecimal saldoUsuario = usuarioLogado.getBalance();
 
             // Verificar se o usuário tem saldo suficiente para realizar a aposta
             if (valorAposta.compareTo(saldoUsuario) > 0) {
@@ -359,7 +360,7 @@ public class JanelaPrincipal extends JFrame {
             apostaService.criarAposta(aposta, palpites);
 
             // Subtrair o valor da aposta do saldo do usuário
-            usuarioLogado.setBalance(saldoUsuario.subtract(valorAposta).doubleValue());
+            usuarioLogado.setBalance(saldoUsuario.subtract(valorAposta));
 
             // Atualizar a interface com o novo saldo
             updateUIForLoggedUser();
