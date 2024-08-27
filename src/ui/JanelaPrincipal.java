@@ -1,3 +1,4 @@
+
 package ui;
 
 import javax.swing.*;
@@ -198,27 +199,56 @@ public class JanelaPrincipal extends JFrame {
         List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-25", "America/Bahia", "3");
 
         for (Partida partida : partidas) {
-            JPanel card = new JPanel(new GridLayout(3, 4));
+            // Painel principal para cada partida
+            JPanel card = new JPanel(new GridBagLayout());
             card.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
             card.setBackground(new Color(224, 224, 224));
-            card.setMaximumSize(new Dimension(900, 120));
+            card.setMaximumSize(new Dimension(900, 150));
 
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            // Informações dos times e data
             JLabel lblTimeCasa = new JLabel(partida.getTeamHome(), SwingConstants.CENTER);
             JLabel lblTimeFora = new JLabel(partida.getTeamAway(), SwingConstants.CENTER);
             JLabel lblData = new JLabel(partida.getData().toLocalDateTime().toString(), SwingConstants.CENTER);
             JLabel lblStatus = new JLabel(partida.getStatus(), SwingConstants.CENTER);
 
+            // Configurações de GridBagConstraints para posicionar corretamente os componentes
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            card.add(lblTimeCasa, gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            card.add(lblData, gbc);
+
+            gbc.gridx = 2;
+            gbc.gridy = 0;
+            card.add(lblTimeFora, gbc);
+
+            gbc.gridx = 3;
+            gbc.gridy = 0;
+            card.add(lblStatus, gbc);
+
+            // Botões de odds para a partida
             JButton btnOddCasa = createOddButton(partida.getHomeWinOdd(), partida, "Casa", ResultadoPartida.HOME_WIN);
             JButton btnOddEmpate = createOddButton(partida.getDrawOdd(), partida, "Empate", ResultadoPartida.DRAW);
             JButton btnOddFora = createOddButton(partida.getAwayWinOdd(), partida, "Fora", ResultadoPartida.AWAY_WIN);
 
-            card.add(lblTimeCasa);
-            card.add(lblData);
-            card.add(lblTimeFora);
-            card.add(lblStatus);
-            card.add(btnOddCasa);
-            card.add(btnOddEmpate);
-            card.add(btnOddFora);
+            // Adiciona os botões no painel com espaçamento adequado
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            card.add(btnOddCasa, gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            card.add(btnOddEmpate, gbc);
+
+            gbc.gridx = 2;
+            gbc.gridy = 1;
+            card.add(btnOddFora, gbc);
 
             panelCentral.add(card);
         }
@@ -226,6 +256,7 @@ public class JanelaPrincipal extends JFrame {
         panelCentral.revalidate();
         panelCentral.repaint();
     }
+
 
     private JButton createOddButton(double oddValue, Partida partida, String tipo, ResultadoPartida resultado) {
         JButton btnOdd = new JButton(String.valueOf(oddValue));
@@ -383,7 +414,7 @@ public class JanelaPrincipal extends JFrame {
 
         JLabel lblAposta = new JLabel("Aposta ID: " + aposta.getId() + " - Valor: " + aposta.getAmount());
         lblAposta.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblAposta.setForeground(Color.WHITE);
+        lblAposta.setForeground(new Color(41, 128, 185));
         painelAposta.add(lblAposta, BorderLayout.CENTER);
 
         painelAposta.addMouseListener(new java.awt.event.MouseAdapter() {
