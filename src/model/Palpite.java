@@ -10,7 +10,7 @@ public class Palpite {
 	private ResultadoPartida resultado;
 	private BigDecimal odd;
 		
-	public Palpite(int partidaId, int apostaIDId,ResultadoPartida resultado, BigDecimal odd) {
+	public Palpite(int partidaId, Integer apostaId,ResultadoPartida resultado, BigDecimal odd) {
 		super();
 		this.apostaId = apostaId;
 		this.partidaId = partidaId;

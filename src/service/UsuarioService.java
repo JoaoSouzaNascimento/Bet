@@ -10,52 +10,39 @@ import exceptions.DelecaoException;
 import model.Usuario;
 
 public class UsuarioService {
-	
+
 	private UsuarioDaoPostgreSQL usuarioDao;
-	
+
 	public UsuarioService() {
 		super();
 		usuarioDao = new UsuarioDaoPostgreSQL();
 	}
-	
-	public Usuario getUsuarioPeloEmail(String email) {
-		try {
-			return usuarioDao.getUsuarioByEmail(email);
-		} catch (ConsultaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
+
 	public void atualizarUsuario(Usuario usuario) {
-	    try {
-	        usuarioDao.updateUsuario(usuario);
-	    } catch (AtualizacaoException e) {
-	        e.printStackTrace();
-	    }
+		try {
+			usuarioDao.updateUsuario(usuario);
+		} catch (AtualizacaoException e) {
+			e.printStackTrace();
+		}
 	}
 
-	
 	public void editarUsuarioNome(String email, String username) throws ConsultaException, AtualizacaoException {
-	    // TODO: Adicionar validações
+		// TODO: Adicionar validações
 		System.out.println("Editando usuário com ID: " + email);
-	    Usuario usuario = usuarioDao.getUsuarioByEmail(email); // Pode lançar ConsultaException
-	    if (usuario != null) {
-	        usuario.setUsername(username);
-	        usuarioDao.updateUsuario(usuario); // Atualiza o usuário no banco
-	    } else {
-	        throw new AtualizacaoException("Usuário não encontrado.");
-	    }
+		Usuario usuario = usuarioDao.getUsuarioByEmail(email); // Pode lançar ConsultaException
+		if (usuario != null) {
+			usuario.setUsername(username);
+			usuarioDao.updateUsuario(usuario); // Atualiza o usuário no banco
+		} else {
+			throw new AtualizacaoException("Usuário não encontrado.");
+		}
 	}
 
-
-	
 	public void editarUsuarioApelido(Usuario usuario, String apelido) {
-		//TODO Adicionar validações
-		
+		// TODO Adicionar validações
+
 		usuario.setNickname(apelido);
-		
+
 		try {
 			usuarioDao.updateUsuario(usuario);
 		} catch (AtualizacaoException e) {
@@ -63,12 +50,12 @@ public class UsuarioService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void editarUsuarioSenha(Usuario usuario, String senhaVelha, String novaSenha, String email) {
-		//TODO Adicionar validações
-		
+		// TODO Adicionar validações
+
 		usuario.setPassword(novaSenha);
-		
+
 		try {
 			usuarioDao.updateUsuario(usuario);
 		} catch (AtualizacaoException e) {
@@ -76,12 +63,12 @@ public class UsuarioService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void editarUsuarioEmail(Usuario usuario, String email) {
-		//TODO Adicionar validações
-		
+		// TODO Adicionar validações
+
 		usuario.setEmail(email);
-		
+
 		try {
 			usuarioDao.updateUsuario(usuario);
 		} catch (AtualizacaoException e) {
@@ -89,12 +76,12 @@ public class UsuarioService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void deletarUsuario(Usuario usuario, String email) {
-		//TODO Adicionar validações
-		
+		// TODO Adicionar validações
+
 		usuario.setDeleted(true);
-		
+
 		try {
 			usuarioDao.deleteUsuario(usuario.getId());
 		} catch (DelecaoException e) {
@@ -102,49 +89,16 @@ public class UsuarioService {
 			e.printStackTrace();
 		}
 	}
-	
-	public void listarTodosUsuarios() {
-		try {
-			usuarioDao.getTodosUsuarios();
-		} catch (ConsultaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public List<Usuario> listarTodosUsuarioAtivos(){ 
-		
-		try {
-			return usuarioDao.getTodosUsuariosAtivos();
-		} catch (ConsultaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	
-	
-	public List<Usuario> listarTodosUsuarioInativos(){ 
-		
-		try {
-			return usuarioDao.getTodosUsuariosInativos();
-		} catch (ConsultaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
 
 	public void editarUsuarioEmail(UUID usuarioId, String email) throws ConsultaException, AtualizacaoException {
-	    // TODO: Adicionar validações para o e-mail
-	    System.out.println("Editando e-mail do usuário com ID: " + usuarioId);
-	    Usuario usuario = usuarioDao.getUsuarioById(usuarioId); // Pode lançar ConsultaException
-	    if (usuario != null) {
-	        usuario.setEmail(email);
-	        usuarioDao.updateUsuario(usuario); // Atualiza o usuário no banco
-	    } else {
-	        throw new AtualizacaoException("Usuário não encontrado.");
-	    }
+		// TODO: Adicionar validações para o e-mail
+		System.out.println("Editando e-mail do usuário com ID: " + usuarioId);
+		Usuario usuario = usuarioDao.getUsuarioById(usuarioId); // Pode lançar ConsultaException
+		if (usuario != null) {
+			usuario.setEmail(email);
+			usuarioDao.updateUsuario(usuario); // Atualiza o usuário no banco
+		} else {
+			throw new AtualizacaoException("Usuário não encontrado.");
+		}
 	}
 }
