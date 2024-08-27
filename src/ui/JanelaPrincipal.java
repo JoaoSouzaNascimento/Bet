@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import model.Partida;
 import model.Usuario;
@@ -195,7 +199,32 @@ public class JanelaPrincipal extends JFrame {
     
     private void carregarPartidas() {
         panelCentral.removeAll();
-        List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-25", "America/Bahia", "3");
+        // TODO retirar a implementação abaixo:
+        List<Partida> partidas = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < 10; i++) {
+                String id = String.valueOf(i);
+                String teamHome = "TeamHome" + i;
+                URL teamHomeLogo = new URL("http://example.com/logo" + i);
+                String teamAway = "TeamAway" + i;
+                URL teamAwayLogo = new URL("http://example.com/logo" + i);
+                OffsetDateTime data = OffsetDateTime.now(ZoneOffset.UTC);
+                String status = "Status" + i;
+                ResultadoPartida resultado = ResultadoPartida.HOME_WIN; // or any other value
+                float homeWinOdd = 1.0f + i;
+                float awayWinOdd = 2.0f + i;
+                float drawOdd = 3.0f + i;
+
+                Partida partida = new Partida(id, teamHome, teamHomeLogo, teamAway, teamAwayLogo, data, status, resultado, homeWinOdd, awayWinOdd, drawOdd);
+                partidas.add(partida);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        // TODO retirar a implementação acima e descomentar a função abaixo
+        
+        //List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-25", "America/Bahia", "3");
 
         for (Partida partida : partidas) {
             JPanel card = new JPanel(new GridLayout(3, 4));

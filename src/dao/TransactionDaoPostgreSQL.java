@@ -33,8 +33,7 @@ public class TransactionDaoPostgreSQL implements TransactionDao {
 	public Transaction createTransaction(Transaction transaction, Usuario usuario) throws InsercaoException {
 
 		try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
-				PreparedStatement ps = conn.prepareStatement(INSERT_TRANSACTION,
-						PreparedStatement.RETURN_GENERATED_KEYS)) {
+				PreparedStatement ps = conn.prepareStatement(INSERT_TRANSACTION)) {
 
 			ps.setObject(1, usuario.getId());
 			ps.setString(2, transaction.getType());
@@ -47,6 +46,7 @@ public class TransactionDaoPostgreSQL implements TransactionDao {
 				}
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new InsercaoException("Erro ao criar transação no banco:" + e.getMessage());
 		}
 
@@ -86,6 +86,7 @@ public class TransactionDaoPostgreSQL implements TransactionDao {
 				}
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new ConsultaException("Erro ao buscar transação por ID", e);
 		}
 
@@ -124,6 +125,7 @@ public class TransactionDaoPostgreSQL implements TransactionDao {
 				}
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new ConsultaException("Erro ao buscar transações por usuário", e);
 		}
 

@@ -3,6 +3,15 @@ package config;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import dao.ApostaDao;
+import dao.ApostaDaoPostgreSQL;
+import dao.PalpiteDao;
+import dao.PalpiteDaoPostgreSQL;
+import dao.UsuarioDao;
+import dao.UsuarioDaoPostgreSQL;
+import service.ApostaService;
+import service.FootballApiService;
+import service.PartidaService;
 import service.TransactionService;
 import service.UsuarioService;
 import ui.CadastroPanel;
@@ -18,6 +27,9 @@ public class AppLauncher {
             // Configura o AppContext com o UsuarioService
             AppContext.setUsuarioService(usuarioService);
         	AppContext.setTransactionService(transactionService);
+        	AppContext.setFootballApiService(new FootballApiService(AppContext.API_KEY, AppContext.API_HOST));
+        	AppContext.setApostaService(new ApostaService(new ApostaDaoPostgreSQL(), new PalpiteDaoPostgreSQL(), AppContext.getFootballApiService(),
+        			new PartidaService(), new UsuarioDaoPostgreSQL()));
             // Cria o JFrame
             //JFrame frame = new JFrame("Cadastro");
             //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

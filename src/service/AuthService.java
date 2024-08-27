@@ -26,6 +26,8 @@ public class AuthService {
 		
 		try {
 			usuario = usuarioDao.getUsuarioByEmail(email);
+			if(usuario == null)
+				throw new ConsultaException("Usuário não encontrado");
 		} catch (ConsultaException e) {
 			throw e;
 		}

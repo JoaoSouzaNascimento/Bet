@@ -73,13 +73,8 @@ public class ApostaService {
 		}
 	}
 
-	public List<Aposta> getTodasApostas(Usuario usuario) {
-		try {
+	public List<Aposta> getTodasApostas(Usuario usuario) throws ConsultaException {
 			return apostaDao.getTodasApostasPorUsuarioId(usuario.getId());
-		} catch (ConsultaException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 //	public void atualizarValorApostado(Aposta aposta, BigDecimal novoValorApostado) {
