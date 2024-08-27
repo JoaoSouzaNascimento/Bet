@@ -46,6 +46,7 @@ public class JanelaPrincipal extends JFrame {
     private JButton btnLogout;
     private JPanel panelListaPalpites; // Novo painel para lista de palpites
     
+    
     private static class PartidaSelecionada {
         Partida partida;
         double oddSelecionada;
@@ -236,11 +237,18 @@ public class JanelaPrincipal extends JFrame {
         getContentPane().add(new JScrollPane(panelApostasPendentes), BorderLayout.EAST);
     }
     
+    public void atualizarSaldoUI() {
+        if (usuarioLogado != null) {
+            lblSaldo.setText("Saldo: " + String.format("%.2f", usuarioLogado.getBalance()));
+        }
+    }
+    
     private void abrirUsuarioPanel() {
         if (usuarioLogado != null) {
-            UsuarioPanel usuarioPanel = new UsuarioPanel();
+            UsuarioPanel usuarioPanel = new UsuarioPanel(this);  
             usuarioPanel.setUsuario(usuarioLogado);
             usuarioPanel.setVisible(true);
+            this.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(this, "Nenhum usuário logado", "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -583,6 +591,7 @@ public class JanelaPrincipal extends JFrame {
     private void updateUIForLoggedUser() {
         if (usuarioLogado != null) {
             atualizarApostasPendentes(usuarioLogado);
+            atualizarSaldoUI();
             lblUsuario.setText("Usuário: " + usuarioLogado.getUsername());
             lblSaldo.setText("Saldo: " + String.format("%.2f", usuarioLogado.getBalance()));
         } else {
