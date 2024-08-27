@@ -289,7 +289,7 @@ public class JanelaPrincipal extends JFrame {
                 "America/Bahia"
             );
 
-            apostaService.criarAposta(usuarioLogado.getId(), aposta, palpites);
+            apostaService.criarAposta( aposta, palpites);
 
             JOptionPane.showMessageDialog(this, "Aposta realizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             carrinhoApostas.clear();  // Limpa o carrinho após a aposta

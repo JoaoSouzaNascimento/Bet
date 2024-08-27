@@ -18,7 +18,7 @@ import model.Aposta;
 
 public class ApostaDaoPostgreSQL implements ApostaDao {
 
-	private static final String INSERT_BET = "INSERT INTO \"BETS\" (\"USER_ID\", \"AMOUNT\", \"STATUS\", \"DATE\") VALUES (?, ?, ?, ?)";
+	private static final String INSERT_BET = "INSERT INTO \"BETS\" (\"USER_ID\", \"AMOUNT\", \"STATUS\", \"DATE\") VALUES (?, ?, ?, ?) RETURNING \"ID\"";
 	private static final String UPDATE_BET = "UPDATE \"BETS\" SET \"AMOUNT\" = ?, \"STATUS\" = ?, \"DATE\" = ?, WHERE \"ID\" = ?";
 	private static final String SELECT_BET_BY_ID = "SELECT * FROM \"BETS\" WHERE \"ID\" = ?";
 	private static final String SELECT_ALL_BETS = "SELECT * FROM \"BETS\" WHERE \"USER_ID\" = ? ";
@@ -32,17 +32,26 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 
 			ps.setObject(1, aposta.getUserId());
 			ps.setBigDecimal(2, aposta.getAmount());
-			ps.setBoolean(3, aposta.getStatus());
+			if (aposta.getStatus() == null) {
+				ps.setNull(3, java.sql.Types.BOOLEAN);
+			} else {
+				ps.setBoolean(3, aposta.getStatus());
+			}
 			ps.setDate(4, java.sql.Date.valueOf(aposta.getDate()));
-			ps.executeUpdate();
 			
-			try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-			    if (generatedKeys.next()) {
-			     aposta.setId(generatedKeys.getInt(1));
-			    }
-			   }
+
+			try (ResultSet generatedKeys = ps.executeQuery()) {
+				if (generatedKeys.next()) {
+					aposta.setId(generatedKeys.getInt("ID"));
+				}
+			}
+			
+			if (aposta.getId() == null) {
+	            throw new InsercaoException("Erro ao criar aposta: ID não foi definido");
+	        }
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new InsercaoException("Erro ao criar aposta", e);
 		}
 		return aposta;
@@ -56,7 +65,11 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 
 			ps.setInt(5, aposta.getId());
 			ps.setBigDecimal(1, aposta.getAmount());
-			ps.setBoolean(2, aposta.getStatus());
+			if (aposta.getStatus() == null) {
+				ps.setNull(2, java.sql.Types.BOOLEAN);
+			} else {
+				ps.setBoolean(2, aposta.getStatus());
+			}
 			ps.setDate(3, java.sql.Date.valueOf(aposta.getDate()));
 
 			ps.executeUpdate();
@@ -127,7 +140,7 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 		Integer id = rs.getInt("ID");
 		UUID userId = rs.getObject("USER_ID", UUID.class);
 		BigDecimal amount = rs.getBigDecimal("AMOUNT");
-		Boolean status = rs.getBoolean("STATUS");
+		Boolean status = (Boolean) rs.getObject("STATUS");
 		LocalDate date = rs.getDate("DATE").toLocalDate();
 
 		return new Aposta(id, userId, amount, null, status, date);

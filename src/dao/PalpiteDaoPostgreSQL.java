@@ -16,11 +16,11 @@ import model.ResultadoPartida;
 
 public class PalpiteDaoPostgreSQL implements PalpiteDao {
 
-	private static final String INSERT_PALPITE = "INSERT INTO BETS_MATCHES (BET_ID, MATCH_ID, SHOT, ODD) VALUES (?, ?, ?, ?)";
-	private static final String UPDATE_PALPITE = "UPDATE BETS_MATCHES SET SHOT = ? WHERE BET_ID = ? AND MATCH_ID = ?";
-	private static final String DELETE_PALPITE = "DELETE FROM BETS_MATCHES WHERE BET_ID = ? AND MATCH_ID = ?";
-	private static final String SELECT_PALPITE_BY_MATCH_ID = "SELECT BET_ID, MATCH_ID, SHOT, ODD FROM BETS_MATCHES WHERE BET_ID = ? AND MATCH_ID = ?";
-	private static final String SELECT_ALL_PALPITES = "SELECT BET_ID, MATCH_ID, SHOT, ODD FROM BETS_MATCHES WHERE BET_ID = ?";
+	private static final String INSERT_PALPITE = "INSERT INTO \"BETS_MATCHES\" (\"BET_ID\", \"MATCH_ID\", \"SHOT\", \"ODD\") VALUES (?, ?, ?, ?)";
+	private static final String UPDATE_PALPITE = "UPDATE \"BETS_MATCHES\" SET \"SHOT\" = ? WHERE \"BET_ID\" = ? AND \"MATCH_ID\" = ?";
+	private static final String DELETE_PALPITE = "DELETE FROM \"BETS_MATCHES\" WHERE \"BET_ID\" = ? AND \"MATCH_ID\" = ?";
+	private static final String SELECT_PALPITE_BY_MATCH_ID = "SELECT \"BET_ID\", \"MATCH_ID\", \"SHOT\", \"ODD\" FROM \"BETS_MATCHES\" WHERE BET_ID = ? AND MATCH_ID = ?";
+	private static final String SELECT_ALL_PALPITES = "SELECT \"BET_ID\", \"MATCH_ID\", \"SHOT\", \"ODD\" FROM \"BETS_MATCHES\" WHERE \"BET_ID\" = ?";
 
 	private Connection getConnection() throws SQLException {
 		return ConexaoBdSingleton.getInstance().getConexao();
