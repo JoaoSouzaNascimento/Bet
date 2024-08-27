@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public class Palpite {
 	
-	private int apostaId;
+	private Integer apostaId;
 	private int partidaId;
 	private ResultadoPartida resultado;
 	private BigDecimal odd;
 		
-	public Palpite(int partidaId, int apostaIDId,ResultadoPartida resultado, BigDecimal odd) {
+	public Palpite(int partidaId, Integer apostaIDId,ResultadoPartida resultado, BigDecimal odd) {
 		super();
 		this.apostaId = apostaId;
 		this.partidaId = partidaId;

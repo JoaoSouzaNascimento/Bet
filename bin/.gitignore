@@ -1,2 +1,5 @@
-/service/
+/dao/
+/model/
 /ui/
+/config/
+/service/

@@ -80,9 +80,10 @@ public class ApostaService {
 //		}
 //	}
 
-	public void criarAposta(UUID usuarioId, Aposta aposta, List<Palpite> palpites) {
+	public void criarAposta(Aposta aposta, List<Palpite> palpites) {
 		try {
 			apostaDao.createAposta(aposta);
+			palpites.forEach(palpite -> palpite.setApostaId(aposta.getId()));
 			palpiteDao.createListaDePalpites(palpites);
 		} catch (Exception e) {
 			e.printStackTrace();
