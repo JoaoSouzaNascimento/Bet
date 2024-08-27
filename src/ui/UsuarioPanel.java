@@ -27,13 +27,16 @@ public class UsuarioPanel extends JFrame {
 	private UsuarioService usuarioService;
 	private TransactionService transactionService;
 	private ApostaService apostaService;
+	private JanelaPrincipal janelaPrincipal;
 	
-	public UsuarioPanel() {
-		this.usuarioService = AppContext.getUsuarioService();
-		this.transactionService = AppContext.getTransactionService();
-		this.apostaService = AppContext.getApostaService();
-		initialize();
-	}
+	
+	public UsuarioPanel(JanelaPrincipal janelaPrincipal) {  // Recebe a referência ao JanelaPrincipal
+        this.usuarioService = AppContext.getUsuarioService();
+        this.transactionService = AppContext.getTransactionService();
+        this.apostaService = AppContext.getApostaService();
+        this.janelaPrincipal = janelaPrincipal;  // Armazena a referência
+        initialize();
+    }
 
 	public void setUsuario(Usuario usuario) {
 		this.usuarioLogado = usuario;
@@ -131,8 +134,14 @@ public class UsuarioPanel extends JFrame {
 		gbc.gridy = 7;
 		gbc.gridwidth = 2;
 		getContentPane().add(btnBack, gbc);
-		btnBack.addActionListener(e -> dispose());
+		btnBack.addActionListener(e -> voltarParaJanelaPrincipal());
 	}
+	
+	private void atualizarSaldoUI() {
+        lblBalance.setText("Saldo: R$ " + String.format("%.2f", usuarioLogado.getBalance()));
+        janelaPrincipal.atualizarSaldoUI();  // Atualiza o saldo na JanelaPrincipal
+    }
+
 
 	private JLabel createStyledLabel(String text) {
 		JLabel label = new JLabel(text);
@@ -196,6 +205,8 @@ public class UsuarioPanel extends JFrame {
 				BigDecimal valor = new BigDecimal(txtValor.getText());
 				if (valor.compareTo(BigDecimal.ZERO) > 0) {
 					transactionService.depositar(usuarioLogado.getId(), valor);
+					usuarioLogado = usuarioService.getUsuarioById(usuarioLogado.getId());
+					atualizarSaldoUI();
 					JOptionPane.showMessageDialog(dialog, "Depósito realizado com sucesso!");
 					lblSaldo.setText("Saldo Atual: R$ " + usuarioLogado.getBalance());
 				} else {
@@ -253,6 +264,8 @@ public class UsuarioPanel extends JFrame {
 				BigDecimal valor = new BigDecimal(txtValor.getText());
 				if (valor.compareTo(BigDecimal.ZERO) > 0) {
 					transactionService.sacar(usuarioLogado.getId(), valor);
+					usuarioLogado = usuarioService.getUsuarioById(usuarioLogado.getId());
+					atualizarSaldoUI();
 					JOptionPane.showMessageDialog(dialog, "Saque realizado com sucesso!");
 					lblSaldo.setText("Saldo Atual: R$ " + usuarioLogado.getBalance());
 				} else {
@@ -379,5 +392,18 @@ public class UsuarioPanel extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	private void voltarParaJanelaPrincipal() {
+        // Atualiza o usuário e o saldo no JanelaPrincipal
+        try {
+            usuarioLogado = usuarioService.getUsuarioById(usuarioLogado.getId());  // Recarrega o usuário do banco
+            janelaPrincipal.setUsuario(usuarioLogado);  // Atualiza o saldo na JanelaPrincipal
+        } catch (ConsultaException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao recarregar o saldo: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+        // Fecha o painel do usuário
+        this.dispose();
+        // Reabre a JanelaPrincipal
+        janelaPrincipal.setVisible(true);
+    }
 
 }
