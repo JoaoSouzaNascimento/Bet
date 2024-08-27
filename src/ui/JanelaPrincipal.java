@@ -168,7 +168,7 @@ public class JanelaPrincipal extends JFrame {
                 }
             }
         });
-        panelBotoes.add(btnLogout);
+        panelBotoes.add(btnValidar);
         
         panelCentral = new JPanel();
         panelCentral.setBorder(new EmptyBorder(10, 10, 10, 10));
