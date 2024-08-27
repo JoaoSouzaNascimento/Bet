@@ -22,7 +22,7 @@ public class PartidaService {
 	private final FootballApiService footballService;
 
 	public PartidaService() {
-		this.footballService = new FootballApiService("c3228facec7d0ee8fe14fc3b6d71742d", "v3.football.api-sports.io");
+		this.footballService = new FootballApiService("0af6c4cae9850dba88765797e79d9413", "v3.football.api-sports.io");
 	}
 
 	public FixtureData getFixtureData(FixtureResponse fixture) throws MalformedURLException {

@@ -31,19 +31,21 @@ public class JanelaPrincipal extends JFrame {
     private JLabel lblMultiplicacaoOdds;
     private JTextField txtValorAposta;
     private JButton btnConfirmarAposta;
-    private JComboBox<ResultadoPartida> cbResultadoPartida;  // Adiciona uma combobox para o resultado
+    private JComboBox<ResultadoPartida> cbResultadoPartida;
     private PartidaService partidaService;
     private ApostaService apostaService;
     private List<PartidaSelecionada> carrinhoApostas;
     private JPanel panelCentral;
     private JPanel panelCarrinho;
-    private JPanel panelApostasPendentes;  // Adiciona painel para apostas pendentes
-    
+    private JPanel panelApostasPendentes;
+    private JButton btnPerfil;  // Botão de perfil do usuário
+    private JButton btnRefresh;
+    private JPanel panelListaPalpites; // Novo painel para lista de palpites
     
     private static class PartidaSelecionada {
         Partida partida;
         double oddSelecionada;
-        ResultadoPartida resultadoSelecionado;  // Adiciona o campo para o resultado
+        ResultadoPartida resultadoSelecionado;
 
         PartidaSelecionada(Partida partida, double oddSelecionada, ResultadoPartida resultadoSelecionado) {
             this.partida = partida;
@@ -53,7 +55,7 @@ public class JanelaPrincipal extends JFrame {
     }
 
     public JanelaPrincipal() {
-    	ApostaDaoPostgreSQL apostaDao = new ApostaDaoPostgreSQL(); 
+        ApostaDaoPostgreSQL apostaDao = new ApostaDaoPostgreSQL(); 
         PalpiteDaoPostgreSQL palpiteDao = new PalpiteDaoPostgreSQL(); 
         String apiKey = AppContext.API_KEY;
         String apiHost = AppContext.API_HOST;
@@ -66,6 +68,7 @@ public class JanelaPrincipal extends JFrame {
         initialize();
         carregarPartidas();
     }
+
     public JanelaPrincipal(ApostaService apostaService) {
         this.partidaService = new PartidaService();
         this.apostaService = apostaService;
@@ -85,20 +88,30 @@ public class JanelaPrincipal extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        JPanel panelSuperior = new JPanel(new BorderLayout());
+        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelSuperior.setBorder(new EmptyBorder(10, 10, 10, 10));
         panelSuperior.setBackground(new Color(34, 49, 63));
         getContentPane().add(panelSuperior, BorderLayout.NORTH);
 
+        btnPerfil = new JButton("Perfil");
+        btnPerfil.setPreferredSize(new Dimension(100, 30));
+        btnPerfil.addActionListener(e -> abrirUsuarioPanel());
+        panelSuperior.add(btnPerfil);
+
+        btnRefresh = new JButton("Refresh");
+        btnRefresh.setPreferredSize(new Dimension(100, 30));
+        btnRefresh.addActionListener(e -> carregarPartidas());
+        panelSuperior.add(btnRefresh);
+
         JLabel lblTitle = new JLabel("Casa de Apostas", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
         lblTitle.setForeground(Color.WHITE);
-        panelSuperior.add(lblTitle, BorderLayout.CENTER);
+        panelSuperior.add(lblTitle);
 
         JPanel panelUsuario = new JPanel();
         panelUsuario.setLayout(new FlowLayout(FlowLayout.RIGHT));
         panelUsuario.setOpaque(false);
-        panelSuperior.add(panelUsuario, BorderLayout.EAST);
+        panelSuperior.add(panelUsuario);
 
         lblUsuario = new JLabel("Usuário: ");
         lblUsuario.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -110,23 +123,32 @@ public class JanelaPrincipal extends JFrame {
         lblSaldo.setForeground(Color.WHITE);
         panelUsuario.add(lblSaldo);
 
-        // Painel central com partidas
         panelCentral = new JPanel();
         panelCentral.setBorder(new EmptyBorder(10, 10, 10, 10));
         panelCentral.setBackground(new Color(44, 62, 80));
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         getContentPane().add(new JScrollPane(panelCentral), BorderLayout.CENTER);
 
-        // Painel de Carrinho e Aposta
         panelCarrinho = new JPanel(new BorderLayout());
         panelCarrinho.setBorder(new EmptyBorder(10, 10, 10, 10));
         panelCarrinho.setBackground(new Color(34, 49, 63));
         getContentPane().add(panelCarrinho, BorderLayout.SOUTH);
 
+        JPanel panelCarrinhoLeft = new JPanel(new BorderLayout());
+        panelCarrinhoLeft.setOpaque(false);
+        panelCarrinho.add(panelCarrinhoLeft, BorderLayout.WEST);
+
         lblCarrinhoInfo = new JLabel("Carrinho de Apostas: 0 odds selecionadas");
         lblCarrinhoInfo.setFont(new Font("Arial", Font.PLAIN, 16));
         lblCarrinhoInfo.setForeground(Color.WHITE);
-        panelCarrinho.add(lblCarrinhoInfo, BorderLayout.NORTH);
+        panelCarrinhoLeft.add(lblCarrinhoInfo, BorderLayout.NORTH);
+
+        panelListaPalpites = new JPanel();
+        panelListaPalpites.setLayout(new BoxLayout(panelListaPalpites, BoxLayout.Y_AXIS));
+        panelListaPalpites.setBorder(BorderFactory.createTitledBorder("Palpites Selecionados"));
+        panelListaPalpites.setBackground(new Color(34, 49, 63));
+        panelListaPalpites.setForeground(Color.WHITE);
+        panelCarrinhoLeft.add(new JScrollPane(panelListaPalpites), BorderLayout.CENTER);
 
         lblMultiplicacaoOdds = new JLabel("Multiplicação de Odds: 1.0");
         lblMultiplicacaoOdds.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -149,19 +171,27 @@ public class JanelaPrincipal extends JFrame {
         btnConfirmarAposta.setPreferredSize(new Dimension(200, 40));
         panelAposta.add(btnConfirmarAposta);
 
-        // Atualiza o valor do possível retorno ao modificar o valor da aposta
         txtValorAposta.addActionListener(e -> atualizarValorRetorno());
 
         btnConfirmarAposta.addActionListener(e -> confirmarAposta());
 
-        // Adiciona o painel para exibir apostas pendentes
         panelApostasPendentes = new JPanel();
         panelApostasPendentes.setLayout(new BoxLayout(panelApostasPendentes, BoxLayout.Y_AXIS));
         panelApostasPendentes.setBorder(BorderFactory.createTitledBorder("Apostas Pendentes"));
-        panelApostasPendentes.setPreferredSize(new Dimension(300, 700));  // Tamanho do painel
+        panelApostasPendentes.setPreferredSize(new Dimension(300, 700));
         getContentPane().add(new JScrollPane(panelApostasPendentes), BorderLayout.EAST);
     }
-
+    
+    private void abrirUsuarioPanel() {
+        if (usuarioLogado != null) {
+            UsuarioPanel usuarioPanel = new UsuarioPanel();
+            usuarioPanel.setUsuario(usuarioLogado);
+            usuarioPanel.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Nenhum usuário logado", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     private void carregarPartidas() {
         panelCentral.removeAll();
         List<Partida> partidas = partidaService.BuscarPartidasPorDia("71", "2024", "2024-08-25", "America/Bahia", "3");
@@ -244,6 +274,32 @@ public class JanelaPrincipal extends JFrame {
 
         lblMultiplicacaoOdds.setText("Multiplicação de Odds: " + multiplicacaoOdds);
         atualizarValorRetorno();
+
+        // Atualizar lista de palpites
+        panelListaPalpites.removeAll();
+        for (PartidaSelecionada selecionada : carrinhoApostas) {
+            JPanel painelPalpite = new JPanel(new BorderLayout());
+            painelPalpite.setOpaque(false);
+
+            JLabel lblPalpite = new JLabel(String.format("%s vs %s - Odd: %.2f - Resultado: %s",
+                    selecionada.partida.getTeamHome(),
+                    selecionada.partida.getTeamAway(),
+                    selecionada.oddSelecionada,
+                    selecionada.resultadoSelecionado));
+            lblPalpite.setForeground(Color.WHITE);
+            painelPalpite.add(lblPalpite, BorderLayout.CENTER);
+
+            JButton btnExcluir = new JButton("Excluir");
+            btnExcluir.addActionListener(e -> {
+                removerDoCarrinho(selecionada.partida);
+            });
+            painelPalpite.add(btnExcluir, BorderLayout.EAST);
+
+            panelListaPalpites.add(painelPalpite);
+        }
+
+        panelListaPalpites.revalidate();
+        panelListaPalpites.repaint();
     }
 
     private void atualizarValorRetorno() {
@@ -261,9 +317,20 @@ public class JanelaPrincipal extends JFrame {
 
     private void confirmarAposta() {
         try {
-            double valorAposta = Double.parseDouble(txtValorAposta.getText());
-            if (valorAposta <= 0) {
+            BigDecimal valorAposta = new BigDecimal(txtValorAposta.getText());
+
+            // Verificar se o valor da aposta é válido
+            if (valorAposta.compareTo(BigDecimal.ZERO) <= 0) {
                 JOptionPane.showMessageDialog(this, "O valor da aposta deve ser maior que zero.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Converta o saldo do usuário de double para BigDecimal
+            BigDecimal saldoUsuario = BigDecimal.valueOf(usuarioLogado.getBalance());
+
+            // Verificar se o usuário tem saldo suficiente para realizar a aposta
+            if (valorAposta.compareTo(saldoUsuario) > 0) {
+                JOptionPane.showMessageDialog(this, "Saldo insuficiente para realizar a aposta.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -284,12 +351,18 @@ public class JanelaPrincipal extends JFrame {
 
             Aposta aposta = new Aposta(
                 usuarioLogado.getId(),
-                BigDecimal.valueOf(valorAposta),
+                valorAposta,  
                 palpites,
                 "America/Bahia"
             );
 
-            apostaService.criarAposta( aposta, palpites);
+            apostaService.criarAposta(aposta, palpites);
+
+            // Subtrair o valor da aposta do saldo do usuário
+            usuarioLogado.setBalance(saldoUsuario.subtract(valorAposta).doubleValue());
+
+            // Atualizar a interface com o novo saldo
+            updateUIForLoggedUser();
 
             JOptionPane.showMessageDialog(this, "Aposta realizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             carrinhoApostas.clear();  // Limpa o carrinho após a aposta
@@ -304,13 +377,58 @@ public class JanelaPrincipal extends JFrame {
     }
 
     private void atualizarApostasPendentes(Aposta aposta) {
+        JPanel painelAposta = new JPanel(new BorderLayout());
+        painelAposta.setOpaque(false);
+
         JLabel lblAposta = new JLabel("Aposta ID: " + aposta.getId() + " - Valor: " + aposta.getAmount());
         lblAposta.setFont(new Font("Arial", Font.PLAIN, 14));
-        panelApostasPendentes.add(lblAposta);
+        lblAposta.setForeground(Color.WHITE);
+        painelAposta.add(lblAposta, BorderLayout.CENTER);
+
+        painelAposta.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                mostrarDetalhesAposta(aposta);
+            }
+        });
+
+        panelApostasPendentes.add(painelAposta);
 
         panelApostasPendentes.revalidate();
         panelApostasPendentes.repaint();
     }
+
+    private void mostrarDetalhesAposta(Aposta aposta) {
+        List<Palpite> palpites = apostaService.getPalpitesDeUmaAposta(aposta);
+        
+        if (palpites != null && !palpites.isEmpty()) {
+            // Cria um painel para exibir detalhes da aposta
+            JPanel panelDetalhes = new JPanel();
+            panelDetalhes.setLayout(new BoxLayout(panelDetalhes, BoxLayout.Y_AXIS));
+            panelDetalhes.setBorder(BorderFactory.createTitledBorder("Detalhes da Aposta ID: " + aposta.getId()));
+            
+            for (Palpite palpite : palpites) {
+                JPanel panelPalpite = new JPanel(new GridLayout(1, 3));
+                
+                JLabel lblResultado = new JLabel("Resultado: " + palpite.getResultado());
+                JLabel lblOdd = new JLabel("Odd: " + palpite.getOdd());
+                JLabel lblPartida = new JLabel("Partida ID: " + palpite.getPartidaId());
+                
+                panelPalpite.add(lblResultado);
+                panelPalpite.add(lblOdd);
+                panelPalpite.add(lblPartida);
+                
+                panelDetalhes.add(panelPalpite);
+            }
+
+            // Cria uma caixa de diálogo para exibir os detalhes
+            JOptionPane.showMessageDialog(this, panelDetalhes, "Detalhes da Aposta", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Nenhum detalhe disponível para esta aposta.", "Detalhes da Aposta", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+
 
     private void updateUIForLoggedUser() {
         if (usuarioLogado != null) {

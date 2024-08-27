@@ -89,6 +89,9 @@ public class ApostaService {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
 
 	public void excluirAposta(Aposta aposta) throws Exception {
 		isApostaAberta(aposta);
@@ -102,7 +105,9 @@ public class ApostaService {
 
 	public List<Palpite> getPalpitesDeUmaAposta(Aposta aposta) {
 		try {
+			System.out.println("ID da Aposta: " + aposta.getId());
 			return palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId());
+			
 		} catch (ConsultaException e) {
 			e.printStackTrace();
 		}

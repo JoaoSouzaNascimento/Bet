@@ -12,7 +12,7 @@ public class AppContext {
     public static void setUsuarioService(UsuarioService service) {
         usuarioService = service;
     }
-    public static final String API_KEY = "c56b9a36c9f8d7ccacc12acca78c5c1f";
+    public static final String API_KEY = "0af6c4cae9850dba88765797e79d9413";
     public static final String API_HOST = "v3.football.api-sports.io";
 
     

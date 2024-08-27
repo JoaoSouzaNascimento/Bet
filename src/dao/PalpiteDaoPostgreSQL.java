@@ -133,22 +133,22 @@ public class PalpiteDaoPostgreSQL implements PalpiteDao {
 
 	@Override
 	public List<Palpite> getTodosPalpitesDeUmaAposta(int apostaId) throws ConsultaException {
-		List<Palpite> palpites = new ArrayList<>();
-		try (Connection connection = getConnection();
-				PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES);
-				ResultSet rs = stmt.executeQuery()) {
+	  List<Palpite> palpites = new ArrayList<>();
+	  try (Connection connection = getConnection();
+	    PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_PALPITES)) {
 
-			while (rs.next()) {
-				stmt.setInt(1, apostaId);
-				Palpite palpite = new Palpite(apostaId, rs.getInt("MATCH_ID"),
-						rs.getString("SHOT") == null ? null : ResultadoPartida.valueOf(rs.getString("SHOT")),
-						rs.getBigDecimal("ODD"));
-				palpites.add(palpite);
-			}
-		} catch (SQLException e) {
-			throw new ConsultaException("Erro ao consultar todos os palpites: " + e.getMessage(), e);
-		}
-		return palpites;
-	}
-
+	   stmt.setInt(1, apostaId);
+	   try (ResultSet rs = stmt.executeQuery()) {
+	    while (rs.next()) {
+	     Palpite palpite = new Palpite(apostaId, rs.getInt("MATCH_ID"),
+	       rs.getString("SHOT") == null ? null : ResultadoPartida.valueOf(rs.getString("SHOT")),
+	       rs.getBigDecimal("ODD"));
+	     palpites.add(palpite);
+	    }
+	   }
+	  } catch (SQLException e) {
+	   throw new ConsultaException("Erro ao consultar todos os palpites: " + e.getMessage(), e);
+	  }
+	  return palpites;
+	 }
 }

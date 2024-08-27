@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class FootballApiIntegration {
 	public static void main(String[] args) {
 
-		String apiKey = "c56b9a36c9f8d7ccacc12acca78c5c1f";
+		String apiKey = "c7ca4c65dc60d8ff5a537b1bb02a1465";
 		String apiHost = "v3.football.api-sports.io";
 
 		FootballApiService apiService = new FootballApiService(apiKey, apiHost);
