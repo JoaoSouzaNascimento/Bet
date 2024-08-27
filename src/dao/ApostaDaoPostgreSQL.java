@@ -35,12 +35,12 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 			ps.setBoolean(3, aposta.getStatus());
 			ps.setDate(4, java.sql.Date.valueOf(aposta.getDate()));
 			ps.executeUpdate();
-			
+
 			try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-			    if (generatedKeys.next()) {
-			     aposta.setId(generatedKeys.getInt(1));
-			    }
-			   }
+				if (generatedKeys.next()) {
+					aposta.setId(generatedKeys.getInt(1));
+				}
+			}
 
 		} catch (SQLException e) {
 			throw new InsercaoException("Erro ao criar aposta", e);

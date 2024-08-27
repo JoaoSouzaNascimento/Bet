@@ -79,6 +79,7 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 
 			ps.executeUpdate();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new InsercaoException("Erro ao criar usuário", e);
 		}
 
