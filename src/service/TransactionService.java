@@ -41,7 +41,7 @@ public class TransactionService {
             throw new ConsultaException("Usuário não encontrado.");
         }
         
-        double newBalance = usuario.getBalance() + amount.doubleValue();
+        BigDecimal newBalance = usuario.getBalance().add(amount);
         usuario.setBalance(newBalance);
         usuarioDao.updateUsuario(usuario);
         
@@ -74,8 +74,8 @@ public class TransactionService {
             throw new ConsultaException("Usuário não encontrado.");
         }
         
-        double newBalance = usuario.getBalance() - amount.doubleValue();
-        if (newBalance < 0) {
+        BigDecimal newBalance = usuario.getBalance().subtract(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new AtualizacaoException("Saldo insuficiente.");
         }
         usuario.setBalance(newBalance);

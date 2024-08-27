@@ -73,7 +73,7 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 			ps.setString(3, usuario.getNickname());
 			ps.setString(4, usuario.getPassword());
 			ps.setString(5, usuario.getEmail());
-			ps.setDouble(6, usuario.getBalance());
+			ps.setBigDecimal(6, usuario.getBalance());
 			ps.setBoolean(7, usuario.isDeleted());
 			ps.setString(8, usuario.getRole().name());
 
@@ -95,7 +95,7 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 			ps.setString(2, usuario.getNickname());
 			ps.setString(3, usuario.getPassword());
 			ps.setString(4, usuario.getEmail());
-			ps.setDouble(5, usuario.getBalance());
+			ps.setBigDecimal(5, usuario.getBalance());
 			ps.setBoolean(6, usuario.isDeleted());
 			ps.setString(7, usuario.getRole().name());
 			ps.setObject(8, usuario.getId());
@@ -174,7 +174,7 @@ public class UsuarioDaoPostgreSQL implements UsuarioDao {
 
 	private Usuario extractUserFromResultSet(ResultSet rs) throws SQLException {
 		return new Usuario(rs.getObject("id", UUID.class), rs.getString("username"), rs.getString("nickname"),
-				rs.getString("password"), rs.getString("email"), rs.getDouble("balance"), rs.getBoolean("deleted"),
+				rs.getString("password"), rs.getString("email"), rs.getBigDecimal("balance"), rs.getBoolean("deleted"),
 				CargoUsuario.valueOf(rs.getString("role")));
 	}
 

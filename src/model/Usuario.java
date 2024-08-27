@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Usuario {
@@ -9,7 +10,7 @@ public class Usuario {
 	private String nickname;
 	private String password;
 	private String email;
-	private double balance;
+	private BigDecimal balance;
 	private boolean deleted;
 	private CargoUsuario role;
 
@@ -45,11 +46,11 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 
@@ -73,7 +74,7 @@ public class Usuario {
 		return id;
 	}
 
-	public Usuario(UUID id, String username, String nickname, String password, String email, double balance,
+	public Usuario(UUID id, String username, String nickname, String password, String email, BigDecimal balance,
 			boolean deleted, CargoUsuario role) {
 		super();
 		this.id = id;

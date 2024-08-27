@@ -9,6 +9,7 @@ import java.util.UUID;
 import api.dto.FixtureResponse;
 import dao.ApostaDao;
 import dao.PalpiteDao;
+import dao.UsuarioDao;
 import exceptions.AtualizacaoException;
 import exceptions.ConsultaException;
 import exceptions.DelecaoException;
@@ -23,13 +24,15 @@ public class ApostaService {
 	private final PalpiteDao palpiteDao;
 	private final FootballApiService footballApiService;
 	private final PartidaService partidaService;
+	private final UsuarioDao usuarioDao;
 
 	public ApostaService(ApostaDao apostaDao, PalpiteDao palpiteDao, FootballApiService footballApiService,
-			PartidaService partidaService) {
+			PartidaService partidaService, UsuarioDao usuarioDao) {
 		this.apostaDao = apostaDao;
 		this.palpiteDao = palpiteDao;
 		this.footballApiService = footballApiService;
 		this.partidaService = partidaService;
+		this.usuarioDao = usuarioDao;
 	}
 
 	public boolean validarAposta(Aposta aposta, String league, String timezone) throws Exception {
@@ -43,6 +46,16 @@ public class ApostaService {
 			boolean apostaGanha = isApostaGanha(palpites, fixtureDataList);
 
 			aposta.setStatus(apostaGanha);
+			
+			if (apostaGanha) {
+                BigDecimal totalOdd = palpites.stream().map(Palpite::getOdd).reduce(BigDecimal.ONE, BigDecimal::multiply);
+                BigDecimal valorGanho = aposta.getAmount().multiply(totalOdd);
+
+                Usuario usuario = usuarioDao.getUsuarioById(aposta.getUserId());
+                usuario.setBalance(usuario.getBalance().add(valorGanho));
+                usuarioDao.updateUsuario(usuario);
+            }
+			
 			apostaDao.updateAposta(aposta);
 			return apostaGanha;
 		} catch (ConsultaException | AtualizacaoException e) {
@@ -81,14 +94,21 @@ public class ApostaService {
 //	}
 
 	public void criarAposta(Aposta aposta, List<Palpite> palpites) {
-		try {
-			apostaDao.createAposta(aposta);
-			palpites.forEach(palpite -> palpite.setApostaId(aposta.getId()));
-			palpiteDao.createListaDePalpites(palpites);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            Usuario usuario = usuarioDao.getUsuarioById(aposta.getUserId());
+            if (usuario.getBalance().compareTo(aposta.getAmount()) < 0) {
+                throw new Exception("Saldo insuficiente para realizar a aposta.");
+            }
+            usuario.setBalance(usuario.getBalance().subtract(aposta.getAmount()));
+            usuarioDao.updateUsuario(usuario);
+
+            apostaDao.createAposta(aposta);
+            palpites.forEach(palpite -> palpite.setApostaId(aposta.getId()));
+            palpiteDao.createListaDePalpites(palpites);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	public void excluirAposta(Aposta aposta) throws Exception {
 		isApostaAberta(aposta);

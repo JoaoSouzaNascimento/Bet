@@ -1,5 +1,6 @@
 package service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -64,7 +65,7 @@ public class AuthService {
 	        throw new CadastroException("Erro ao verificar a existência do usuário: " + e.getMessage());
 	    }
 		
-		Usuario usuario = new Usuario(UUID.randomUUID(), username, nickname, BCrypt.hashpw(password, BCrypt.gensalt()), email, 0.0, false, role);
+		Usuario usuario = new Usuario(UUID.randomUUID(), username, nickname, BCrypt.hashpw(password, BCrypt.gensalt()), email, BigDecimal.valueOf(0), false, role);
 	    try {
 	        usuarioDao.createUsuario(usuario);
 		} catch (InsercaoException e) {

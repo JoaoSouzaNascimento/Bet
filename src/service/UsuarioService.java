@@ -25,6 +25,10 @@ public class UsuarioService {
 			e.printStackTrace();
 		}
 	}
+	
+	public Usuario getUsuarioById(UUID id) throws ConsultaException {
+		return usuarioDao.getUsuarioById(id);
+	}
 
 	public void editarUsuarioNome(String email, String username) throws ConsultaException, AtualizacaoException {
 		// TODO: Adicionar validações
