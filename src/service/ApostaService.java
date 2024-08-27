@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import api.dto.FixtureResponse;
 import dao.ApostaDao;
@@ -81,6 +82,18 @@ public class ApostaService {
 			return null;
 		}
 	}
+	
+	public List<Aposta> getApostasPendentes(Usuario usuario) {
+	    try {
+	        return apostaDao.getApostasPendentesPorUsuarioId(usuario.getId());
+	    } catch (ConsultaException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+
+
+
 
 //	public void atualizarValorApostado(Aposta aposta, BigDecimal novoValorApostado) {
 //		

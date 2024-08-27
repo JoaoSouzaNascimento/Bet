@@ -76,6 +76,11 @@ public class JanelaPrincipal extends JFrame {
         this.carrinhoApostas = new ArrayList<>();
         initialize();
         carregarPartidas();
+        
+        if (usuarioLogado != null) {
+            atualizarApostasPendentes(usuarioLogado);
+        }
+        
     }
 
     public JanelaPrincipal(ApostaService apostaService) {
@@ -84,11 +89,15 @@ public class JanelaPrincipal extends JFrame {
         this.carrinhoApostas = new ArrayList<>();
         initialize();
         carregarPartidas();
+        if (usuarioLogado != null) {
+            atualizarApostasPendentes(usuarioLogado);
+        }
     }
 
     public void setUsuario(Usuario usuario) {
         this.usuarioLogado = usuario;
         updateUIForLoggedUser();
+        
     }
 
     private void initialize() {
@@ -97,33 +106,16 @@ public class JanelaPrincipal extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+     // Painel superior
+        JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBorder(new EmptyBorder(10, 10, 10, 10));
         panelSuperior.setBackground(new Color(34, 49, 63));
         getContentPane().add(panelSuperior, BorderLayout.NORTH);
 
-        btnPerfil = padronizarBotao("Perfil");
-        btnPerfil.addActionListener(e -> abrirUsuarioPanel());
-        panelSuperior.add(btnPerfil);
-
-        btnRefresh = padronizarBotao("Refresh");
-        btnRefresh.addActionListener(e -> carregarPartidas());
-        panelSuperior.add(btnRefresh);
-        
-        btnLogout = padronizarBotao("Logout");
-        btnLogout.addActionListener(e -> logout());
-        panelSuperior.add(btnLogout);
-        
-
-        JLabel lblTitle = new JLabel("Casa de Apostas", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
-        lblTitle.setForeground(Color.WHITE);
-        panelSuperior.add(lblTitle);
-
-        JPanel panelUsuario = new JPanel();
-        panelUsuario.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        // Painel de informações do usuário
+        JPanel panelUsuario = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelUsuario.setOpaque(false);
-        panelSuperior.add(panelUsuario);
+        panelSuperior.add(panelUsuario, BorderLayout.WEST);
 
         lblUsuario = new JLabel("Usuário: ");
         lblUsuario.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -134,6 +126,32 @@ public class JanelaPrincipal extends JFrame {
         lblSaldo.setFont(new Font("Arial", Font.PLAIN, 16));
         lblSaldo.setForeground(Color.WHITE);
         panelUsuario.add(lblSaldo);
+
+        // Título centralizado
+        JLabel lblTitle = new JLabel("Casa de Apostas", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
+        lblTitle.setForeground(Color.WHITE);
+        panelSuperior.add(lblTitle, BorderLayout.CENTER);
+
+        // Painel de botões
+        JPanel panelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        panelBotoes.setOpaque(false);
+        panelSuperior.add(panelBotoes, BorderLayout.EAST);
+
+        btnPerfil = padronizarBotao("Perfil");
+        btnPerfil.setPreferredSize(new Dimension(100, 50));
+        btnPerfil.addActionListener(e -> abrirUsuarioPanel());
+        panelBotoes.add(btnPerfil);
+
+        btnRefresh = padronizarBotao("Refresh");
+        btnRefresh.setPreferredSize(new Dimension(100, 50));
+        btnRefresh.addActionListener(e -> carregarPartidas());
+        panelBotoes.add(btnRefresh);
+        
+        btnLogout = padronizarBotao("Logout");
+        btnLogout.setPreferredSize(new Dimension(100, 50));
+        btnLogout.addActionListener(e -> logout());
+        panelBotoes.add(btnLogout);
 
         panelCentral = new JPanel();
         panelCentral.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -180,7 +198,7 @@ public class JanelaPrincipal extends JFrame {
         // Adiciona o painel de palpites ao JScrollPane
         JScrollPane scrollPanePalpites = new JScrollPane(panelListaPalpites);
         scrollPanePalpites.setBorder(BorderFactory.createLineBorder(Color.WHITE));  // Borda branca ao redor do scroll
-        scrollPanePalpites.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); // Sempre mostra a barra de rolagem vertical
+        scrollPanePalpites.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER); // Sempre mostra a barra de rolagem vertical
         scrollPanePalpites.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Não mostra a barra de rolagem horizontal
         scrollPanePalpites.getViewport().setBackground(new Color(34, 49, 63));  // Fundo do viewport do scroll
 
@@ -469,7 +487,9 @@ public class JanelaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Aposta realizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             carrinhoApostas.clear();  // Limpa o carrinho após a aposta
             atualizarCarrinho();
-            atualizarApostasPendentes(aposta);  // Atualiza o painel de apostas pendentes
+            
+            // Atualiza o painel de apostas pendentes com o usuário logado
+            atualizarApostasPendentes(usuarioLogado);  
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Valor inválido para a aposta.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
@@ -478,23 +498,32 @@ public class JanelaPrincipal extends JFrame {
         }
     }
 
-    private void atualizarApostasPendentes(Aposta aposta) {
-        JPanel painelAposta = new JPanel(new BorderLayout());
-        painelAposta.setOpaque(false);
 
-        JLabel lblAposta = new JLabel("Aposta ID: " + aposta.getId() + " - Valor: " + aposta.getAmount());
-        lblAposta.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblAposta.setForeground(new Color(41, 128, 185));
-        painelAposta.add(lblAposta, BorderLayout.CENTER);
+    private void atualizarApostasPendentes(Usuario usuario) {
+        // Limpa o painel antes de adicionar apostas pendentes
+        panelApostasPendentes.removeAll();
 
-        painelAposta.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                mostrarDetalhesAposta(aposta);
-            }
-        });
+        // Obtém todas as apostas pendentes do banco de dados
+        List<Aposta> apostasPendentes = apostaService.getApostasPendentes(usuario);
 
-        panelApostasPendentes.add(painelAposta);
+        for (Aposta aposta : apostasPendentes) {
+            JPanel painelAposta = new JPanel(new BorderLayout());
+            painelAposta.setOpaque(false);
+
+            JLabel lblAposta = new JLabel("Aposta ID: " + aposta.getId() + " - Valor: " + aposta.getAmount());
+            lblAposta.setFont(new Font("Arial", Font.PLAIN, 14));
+            lblAposta.setForeground(new Color(41, 128, 185));
+            painelAposta.add(lblAposta, BorderLayout.CENTER);
+
+            painelAposta.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    mostrarDetalhesAposta(aposta);
+                }
+            });
+
+            panelApostasPendentes.add(painelAposta);
+        }
 
         panelApostasPendentes.revalidate();
         panelApostasPendentes.repaint();
@@ -512,13 +541,11 @@ public class JanelaPrincipal extends JFrame {
             for (Palpite palpite : palpites) {
                 JPanel panelPalpite = new JPanel(new GridLayout(1, 3));
                 
-                JLabel lblResultado = new JLabel("Resultado: " + palpite.getResultado());
-                JLabel lblOdd = new JLabel("Odd: " + palpite.getOdd());
-                JLabel lblPartida = new JLabel("Partida ID: " + palpite.getPartidaId());
+                JLabel lblResultado = new JLabel("Palpite: " + palpite.getResultado());
+                JLabel lblOdd = new JLabel(" Odd: " + palpite.getOdd());
                 
                 panelPalpite.add(lblResultado);
                 panelPalpite.add(lblOdd);
-                panelPalpite.add(lblPartida);
                 
                 panelDetalhes.add(panelPalpite);
             }
@@ -529,7 +556,9 @@ public class JanelaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Nenhum detalhe disponível para esta aposta.", "Detalhes da Aposta", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
+    
+    
+    
     private void logout() {
         // Limpar dados do usuário
         usuarioLogado = null;
@@ -558,6 +587,7 @@ public class JanelaPrincipal extends JFrame {
 
     private void updateUIForLoggedUser() {
         if (usuarioLogado != null) {
+            atualizarApostasPendentes(usuarioLogado);
             lblUsuario.setText("Usuário: " + usuarioLogado.getUsername());
             lblSaldo.setText("Saldo: " + String.format("%.2f", usuarioLogado.getBalance()));
         } else {
