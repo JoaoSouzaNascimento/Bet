@@ -36,29 +36,34 @@ public class ApostaService {
 		this.usuarioDao = usuarioDao;
 	}
 
-	public boolean validarAposta(Aposta aposta, String league, String timezone) throws Exception {
+	public boolean validarApostas(String league, String timezone) throws Exception {
 		try {
-			List<Palpite> palpites = palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId());
-
-			List<FixtureResponse> fixtures = footballApiService.getFixtures(league,
-					String.valueOf(aposta.getDate().getYear()), aposta.getDate().toString(), timezone);
-			List<FixtureData> fixtureDataList = getFinishedFixtures(fixtures);
-
-			boolean apostaGanha = isApostaGanha(palpites, fixtureDataList);
-
-			aposta.setStatus(apostaGanha);
+			List<Aposta> apostas = apostaDao.getApostasComStatusNulo();
 			
-			if (apostaGanha) {
-                BigDecimal totalOdd = palpites.stream().map(Palpite::getOdd).reduce(BigDecimal.ONE, BigDecimal::multiply);
-                BigDecimal valorGanho = aposta.getAmount().multiply(totalOdd);
+			for (Aposta aposta : apostas) {
+				List<Palpite> palpites = palpiteDao.getTodosPalpitesDeUmaAposta(aposta.getId());
 
-                Usuario usuario = usuarioDao.getUsuarioById(aposta.getUserId());
-                usuario.setBalance(usuario.getBalance().add(valorGanho));
-                usuarioDao.updateUsuario(usuario);
-            }
+				List<FixtureResponse> fixtures = footballApiService.getFixtures(league,
+						String.valueOf(aposta.getDate().getYear()), aposta.getDate().toString(), timezone);
+				List<FixtureData> fixtureDataList = getFinishedFixtures(fixtures);
+
+				boolean apostaGanha = isApostaGanha(palpites, fixtureDataList);
+
+				aposta.setStatus(apostaGanha);
+				
+				if (apostaGanha) {
+	                BigDecimal totalOdd = palpites.stream().map(Palpite::getOdd).reduce(BigDecimal.ONE, BigDecimal::multiply);
+	                BigDecimal valorGanho = aposta.getAmount().multiply(totalOdd);
+
+	                Usuario usuario = usuarioDao.getUsuarioById(aposta.getUserId());
+	                usuario.setBalance(usuario.getBalance().add(valorGanho));
+	                usuarioDao.updateUsuario(usuario);
+	            }
+				
+				apostaDao.updateAposta(aposta);
+			}
 			
-			apostaDao.updateAposta(aposta);
-			return apostaGanha;
+			return true;
 		} catch (ConsultaException | AtualizacaoException e) {
 			e.printStackTrace();
 		}
@@ -87,8 +92,14 @@ public class ApostaService {
 	    }
 	}
 
-
-
+	public List<Aposta> getApostasComStatusNulo() {
+	    try {
+	        return apostaDao.getApostasComStatusNulo();
+	    } catch (ConsultaException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
 
 //	public void atualizarValorApostado(Aposta aposta, BigDecimal novoValorApostado) {
 //		

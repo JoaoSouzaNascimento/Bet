@@ -6,6 +6,8 @@ import dao.ApostaDaoPostgreSQL;
 import dao.PalpiteDaoPostgreSQL;
 import dao.UsuarioDaoPostgreSQL;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -140,14 +142,33 @@ public class JanelaPrincipal extends JFrame {
 
         btnRefresh = padronizarBotao("Refresh");
         btnRefresh.setPreferredSize(new Dimension(100, 50));
-        btnRefresh.addActionListener(e -> carregarPartidas());
+        btnRefresh.addActionListener(e -> carregarPartidas() );
         panelBotoes.add(btnRefresh);
         
         btnLogout = padronizarBotao("Logout");
         btnLogout.setPreferredSize(new Dimension(100, 50));
         btnLogout.addActionListener(e -> logout());
         panelBotoes.add(btnLogout);
-
+        
+        JButton btnValidar = padronizarBotao("Validar Apostas");
+        btnValidar.setPreferredSize(new Dimension(100, 50));
+        btnValidar.addActionListener(e -> new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    boolean result = apostaService.validarApostas("71", "America/Bahia");
+                    if (result) {
+                        JOptionPane.showMessageDialog(null, "Apostas validadas com sucesso.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Falha ao validar apostas.");
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Erro ao validar apostas: " + ex.getMessage());
+                }
+            }
+        });
+        panelBotoes.add(btnLogout);
+        
         panelCentral = new JPanel();
         panelCentral.setBorder(new EmptyBorder(10, 10, 10, 10));
         panelCentral.setBackground(new Color(44, 62, 80));
@@ -590,4 +611,6 @@ public class JanelaPrincipal extends JFrame {
             lblSaldo.setText("Saldo: 0.00");
         }
     }
+    
+    
 }

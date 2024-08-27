@@ -23,6 +23,7 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 	private static final String SELECT_ALL_BETS = "SELECT * FROM \"BETS\" WHERE \"USER_ID\" = ? ";
 	private static final String DELETE_BET = "DELETE FROM \"BETS\" WHERE \"ID\" = ?";
 	private static final String SELECT_PENDING_BETS_BY_USER_ID = "SELECT * FROM \"BETS\" WHERE \"USER_ID\" = ? AND \"STATUS\" IS NULL";
+
 	@Override
 	public Aposta createAposta(Aposta aposta) throws InsercaoException {
 
@@ -37,17 +38,16 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 				ps.setBoolean(3, aposta.getStatus());
 			}
 			ps.setDate(4, java.sql.Date.valueOf(aposta.getDate()));
-			
 
 			try (ResultSet generatedKeys = ps.executeQuery()) {
 				if (generatedKeys.next()) {
 					aposta.setId(generatedKeys.getInt("ID"));
 				}
 			}
-			
+
 			if (aposta.getId() == null) {
-	            throw new InsercaoException("Erro ao criar aposta: ID não foi definido");
-	        }
+				throw new InsercaoException("Erro ao criar aposta: ID não foi definido");
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -134,25 +134,46 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 
 		return apostas;
 	}
-	
+
 	public List<Aposta> getApostasPendentesPorUsuarioId(UUID usuarioId) throws ConsultaException {
-        List<Aposta> apostas = new ArrayList<>();
+		List<Aposta> apostas = new ArrayList<>();
 
-        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
-             PreparedStatement ps = conn.prepareStatement(SELECT_PENDING_BETS_BY_USER_ID);) {
+		try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+				PreparedStatement ps = conn.prepareStatement(SELECT_PENDING_BETS_BY_USER_ID);) {
 
-            ps.setObject(1, usuarioId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Aposta aposta = extractApostaFromResultSet(rs);
-                apostas.add(aposta);
-            }
-        } catch (SQLException e) {
-            throw new ConsultaException("Erro ao listar apostas pendentes", e);
-        }
+			ps.setObject(1, usuarioId);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Aposta aposta = extractApostaFromResultSet(rs);
+				apostas.add(aposta);
+			}
+		} catch (SQLException e) {
+			throw new ConsultaException("Erro ao listar apostas pendentes", e);
+		}
 
-        return apostas;
-    }
+		return apostas;
+	}
+
+	private static final String SELECT_BETS_WITH_NULL_STATUS = "SELECT * FROM \"BETS\" WHERE \"STATUS\" IS NULL";
+
+	@Override
+	public List<Aposta> getApostasComStatusNulo() throws ConsultaException {
+		List<Aposta> apostas = new ArrayList<>();
+
+		try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+				PreparedStatement ps = conn.prepareStatement(SELECT_BETS_WITH_NULL_STATUS)) {
+
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Aposta aposta = extractApostaFromResultSet(rs);
+				apostas.add(aposta);
+			}
+		} catch (SQLException e) {
+			throw new ConsultaException("Erro ao listar apostas com status nulo", e);
+		}
+
+		return apostas;
+	}
 
 	private Aposta extractApostaFromResultSet(ResultSet rs) throws SQLException {
 		Integer id = rs.getInt("ID");

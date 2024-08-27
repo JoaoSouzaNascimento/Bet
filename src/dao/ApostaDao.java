@@ -18,5 +18,6 @@ public interface ApostaDao {
     public Aposta getApostaById(int id) throws ConsultaException;
     public List<Aposta> getTodasApostasPorUsuarioId(UUID usuarioId) throws ConsultaException;
     public List<Aposta> getApostasPendentesPorUsuarioId(UUID usuarioId) throws ConsultaException;
+	public List<Aposta> getApostasComStatusNulo() throws ConsultaException;
 }
 
