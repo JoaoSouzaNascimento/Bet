@@ -2,7 +2,6 @@ package ui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,8 +16,10 @@ public class LoginPanel extends JPanel {
     private JTextField txtLogin;
     private JPasswordField txtPassword;
     private AuthService authService;
+    private JFrame parentFrame;
 
     public LoginPanel(JFrame parentFrame) {
+        this.parentFrame = parentFrame;
         this.authService = new AuthService(new UsuarioDaoPostgreSQL());
         setLayout(new BorderLayout());
         setBackground(new Color(44, 62, 80));

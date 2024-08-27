@@ -22,7 +22,7 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 	private static final String SELECT_BET_BY_ID = "SELECT * FROM \"BETS\" WHERE \"ID\" = ?";
 	private static final String SELECT_ALL_BETS = "SELECT * FROM \"BETS\" WHERE \"USER_ID\" = ? ";
 	private static final String DELETE_BET = "DELETE FROM \"BETS\" WHERE \"ID\" = ?";
-
+	private static final String SELECT_PENDING_BETS_BY_USER_ID = "SELECT * FROM \"BETS\" WHERE \"USER_ID\" = ? AND \"STATUS\" IS NULL";
 	@Override
 	public Aposta createAposta(Aposta aposta) throws InsercaoException {
 
@@ -134,6 +134,25 @@ public class ApostaDaoPostgreSQL implements ApostaDao {
 
 		return apostas;
 	}
+	
+	public List<Aposta> getApostasPendentesPorUsuarioId(UUID usuarioId) throws ConsultaException {
+        List<Aposta> apostas = new ArrayList<>();
+
+        try (Connection conn = ConexaoBdSingleton.getInstance().getConexao();
+             PreparedStatement ps = conn.prepareStatement(SELECT_PENDING_BETS_BY_USER_ID);) {
+
+            ps.setObject(1, usuarioId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Aposta aposta = extractApostaFromResultSet(rs);
+                apostas.add(aposta);
+            }
+        } catch (SQLException e) {
+            throw new ConsultaException("Erro ao listar apostas pendentes", e);
+        }
+
+        return apostas;
+    }
 
 	private Aposta extractApostaFromResultSet(ResultSet rs) throws SQLException {
 		Integer id = rs.getInt("ID");
