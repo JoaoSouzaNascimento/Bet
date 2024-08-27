@@ -3,9 +3,14 @@ package config;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import dao.ApostaDaoPostgreSQL;
+import dao.PalpiteDaoPostgreSQL;
 import dao.UsuarioDaoPostgreSQL;
 import service.UsuarioService;
+import service.ApostaService;
 import service.AuthService;
+import service.FootballApiService;
+import service.PartidaService;
 import service.TransactionService;
 import service.UsuarioService;
 import ui.CadastroPanel;
@@ -28,6 +33,7 @@ public class AppLauncher {
             TransactionService transactionService = new TransactionService();
             AppContext.setUsuarioService(usuarioService);
             AppContext.setTransactionService(transactionService);
+            AppContext.setApostaService(new ApostaService(new ApostaDaoPostgreSQL(), new PalpiteDaoPostgreSQL(), new FootballApiService(AppContext.API_KEY, AppContext.API_HOST), new PartidaService(), new UsuarioDaoPostgreSQL()));
 
             // Cria o usuário de teste, se não existir
             appLauncher.criarUsuarioTesteSeNaoExistir();

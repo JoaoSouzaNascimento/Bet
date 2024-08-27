@@ -69,7 +69,7 @@ public class JanelaPrincipal extends JFrame {
         FootballApiService footballApiService = new FootballApiService(apiKey, apiHost);
         PartidaService partidaService = new PartidaService(); 
         
-        this.apostaService = new ApostaService(apostaDao, palpiteDao, footballApiService, partidaService, new UsuarioDaoPostgreSQL());
+        this.apostaService = AppContext.getApostaService();
         this.partidaService = new PartidaService();
         this.carrinhoApostas = new ArrayList<>();
         initialize();
