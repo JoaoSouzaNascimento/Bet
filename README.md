@@ -18,7 +18,7 @@ Este tutorial orienta você a baixar, configurar e executar o projeto. Siga as e
 
 1. **Adicionar os Arquivos ao Classpath:**
    - Certifique-se de que todos os arquivos do projeto estejam incluídos no classpath. A maioria das IDEs gerencia isso automaticamente ao importar o projeto, mas verifique as configurações do classpath para garantir que todos os arquivos necessários estejam acessíveis.
-
+   - Link para lib https://drive.google.com/file/d/16US-L3nBf69oOh6haJeYytG9eMQhn8rb/view?usp=drive_link
 ## Etapa 3: Configurar e Executar o Docker
 
 1. **Navegar até o Diretório do Projeto:**
