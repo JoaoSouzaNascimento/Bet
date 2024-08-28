@@ -11,7 +11,7 @@ Este tutorial orienta você a baixar, configurar e executar o projeto. Siga as e
    - Use o comando abaixo para clonar o repositório do projeto para o seu diretório local:
 
      ```sh
-     git clone https://github.com/JoaoSouzaNascimento/Tigrinho.git
+     git clone https://github.com/JoaoSouzaNascimento/Bet.git
      ```
 
 ## Etapa 2: Configurar o Classpath
