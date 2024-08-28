@@ -22,10 +22,10 @@ Este tutorial orienta você a baixar, configurar e executar o projeto. Siga as e
 ## Etapa 3: Configurar e Executar o Docker
 
 1. **Navegar até o Diretório do Projeto:**
-   - No terminal, navegue até o diretório `Tigrinho/src` onde o arquivo `docker-compose.yml` está localizado. Use o comando abaixo, substituindo o caminho pelo local onde você clonou o projeto:
+   - No terminal, navegue até o diretório `Bet/src` onde o arquivo `docker-compose.yml` está localizado. Use o comando abaixo, substituindo o caminho pelo local onde você clonou o projeto:
 
      ```sh
-     cd /caminho/para/o/projeto/Tigrinho/src
+     cd /caminho/para/o/projeto/Bet/src
      ```
 
 2. **Executar o Docker Compose:**
