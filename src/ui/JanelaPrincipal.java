@@ -153,22 +153,23 @@ public class JanelaPrincipal extends JFrame {
         
         JButton btnValidar = padronizarBotao("Validar Apostas");
         btnValidar.setPreferredSize(new Dimension(100, 50));
-        btnValidar.addActionListener(e -> new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    boolean result = apostaService.validarApostas("71", "America/Bahia");
-                    if (result) {
-                        JOptionPane.showMessageDialog(null, "Apostas validadas com sucesso.");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Falha ao validar apostas.");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Erro ao validar apostas: " + ex.getMessage());
+        btnValidar.addActionListener(e -> {
+            try {
+                boolean result = apostaService.validarApostas("71", "America/Bahia");
+                System.out.println("teste " + result);
+                if (result) {
+                    JOptionPane.showMessageDialog(null, "Apostas validadas com sucesso.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Falha ao validar apostas.");
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao validar apostas: " + ex.getMessage());
             }
         });
+
         panelBotoes.add(btnValidar);
+
         
         panelCentral = new JPanel();
         panelCentral.setBorder(new EmptyBorder(10, 10, 10, 10));
