@@ -23,7 +23,7 @@ public class PartidaService {
 	private final FootballApiService footballService;
 
 	public PartidaService() {
-		this.footballService = AppContext.getFootballApiService();
+		this.footballService = new FootballApiService(AppContext.API_KEY, AppContext.API_HOST);
 	}
 
 	public FixtureData getFixtureData(FixtureResponse fixture) throws MalformedURLException {

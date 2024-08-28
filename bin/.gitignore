@@ -1,4 +1,10 @@
-/service/
-/config/
-/ui/
 /.env.local
+/api/
+/config/
+/dao/
+/docker-compose.yaml
+/exceptions/
+/initdb/
+/model/
+/service/
+/ui/
